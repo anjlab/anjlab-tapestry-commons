@@ -116,6 +116,11 @@ public class ConfigHelper
         configuration.add(propertyName, properties.get(propertyName));
     }
     
+    public String get(String propertyName)
+    {
+        return properties.getProperty(propertyName);
+    }
+    
     private static void assertPropertyDefined(String propertyName, Properties properties)
     {
         if (!properties.containsKey(propertyName))
