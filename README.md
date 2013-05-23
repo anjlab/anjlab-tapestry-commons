@@ -3,7 +3,7 @@ anjlab-tapestry-commons
 
 Set of useful classes that might be helpful for Tapestry5 projects.
 
-No Tapestry-IoC modules here, just use there classes as you want.
+No Tapestry-IoC modules here, just use these classes as you want.
 
 Usually you will register them as services in your AppModule manually.
 
