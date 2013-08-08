@@ -1,0 +1,12 @@
+version = '1.0.0'
+
+dependencies {
+    compile 'org.quartz-scheduler:quartz:2.2.0'
+    compile 'javax.servlet:servlet-api:2.5'
+}
+
+jar {
+    manifest {
+        attributes("Tapestry-Module-Classes": "com.anjlab.tapestry5.services.quartz.QuartzModule")
+    }
+}

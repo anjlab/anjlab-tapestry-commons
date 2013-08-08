@@ -102,6 +102,22 @@ public class ConfigHelper
         properties.load(input);
     }
     
+    public void addIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
+    {
+        if (properties.containsKey(propertyName))
+        {
+            configuration.add(propertyName, properties.get(propertyName));
+        }
+    }
+    
+    public void overrideIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
+    {
+        if (properties.containsKey(propertyName))
+        {
+            configuration.override(propertyName, properties.get(propertyName));
+        }
+    }
+    
     public void override(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         assertPropertyDefined(propertyName, properties);

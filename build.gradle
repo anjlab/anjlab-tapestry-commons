@@ -1,34 +1,38 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
+allprojects {
+    apply plugin: 'eclipse'
+    apply plugin: 'maven'
+    
+    group = 'com.anjlab.tapestry5'
+}
 
-group = 'com.anjlab.tapestry5'
-version = '1.2.2'
-
-sourceCompatibility = 1.6
-targetCompatibility = 1.6
+eclipse { project { name "anjlab-tapestry-commons-parent" } }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.4'
+    gradleVersion = '1.7'
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-dependencies {
-    compile "org.slf4j:slf4j-api:1.7.3"
-    def tapestry_version='5.3.7'
-    compile "org.apache.tapestry:tapestry-core:${tapestry_version}"
-    compile "org.apache.tapestry:tapestry-jpa:${tapestry_version}"
-    compile "commons-io:commons-io:2.4"
-}
-
-/*
-jar {
-    manifest {
-        attributes("Tapestry-Module-Classes": "com.anjlab.tapestry5.services.XModule")
+subprojects {
+    apply plugin: 'java'
+    
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+    
+    repositories {
+        mavenLocal()
+        mavenCentral()
     }
+    
+    dependencies {
+        compile "org.slf4j:slf4j-api:1.7.3"
+        def tapestry_version='5.3.7'
+        compile "org.apache.tapestry:tapestry-core:${tapestry_version}"
+    }
+    
+    /*
+    jar {
+        manifest {
+            attributes("Tapestry-Module-Classes": "com.anjlab.tapestry5.services.XModule")
+        }
+    }
+    */
 }
-*/
