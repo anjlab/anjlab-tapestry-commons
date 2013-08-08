@@ -32,7 +32,19 @@ public class QuatrzJobFactory extends PropertySettingJobFactory implements JobFa
         Registry registry = (Registry)
                 servletContext.getAttribute(TapestryFilter.REGISTRY_CONTEXT_NAME);
         
-        Job job = registry.autobuild(jobClass);
+        Job job;
+        
+        try
+        {
+            job = registry.autobuild(jobClass);
+        }
+        catch (Exception e)
+        {
+            SchedulerException se = new SchedulerException(
+                    "Problem instantiating class '"
+                            + jobDetail.getJobClass().getName() + "'", e);
+            throw se;
+        }
         
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.putAll(scheduler.getContext());

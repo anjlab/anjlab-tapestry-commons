@@ -11,6 +11,15 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.7'
 }
 
+project.ext.tapestry_version='5.3.7'
+
+configurations {
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    all*.exclude group: 'org.slf4j', module: 'slf4j-simple'
+    all*.exclude group: 'log4j', module: 'log4j'
+    all*.exclude group: 'commons-logging', module: 'commons-logging'
+}
+
 subprojects {
     apply plugin: 'java'
     
@@ -23,8 +32,16 @@ subprojects {
     }
     
     dependencies {
-        compile "org.slf4j:slf4j-api:1.7.3"
-        def tapestry_version='5.3.7'
+        def slf4j_version = '1.7.5'
+        def logback_version = '1.0.13'
+        
+        compile "org.slf4j:slf4j-api:${slf4j_version}"
+        compile "org.slf4j:jcl-over-slf4j:${slf4j_version}"
+        compile "org.slf4j:log4j-over-slf4j:${slf4j_version}"
+        
+        compile "ch.qos.logback:logback-core:${logback_version}"
+        compile "ch.qos.logback:logback-classic:${logback_version}"
+        
         compile "org.apache.tapestry:tapestry-core:${tapestry_version}"
     }
     

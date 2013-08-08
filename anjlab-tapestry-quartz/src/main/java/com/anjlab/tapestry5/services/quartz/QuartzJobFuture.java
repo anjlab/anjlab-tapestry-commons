@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Developed mainly for test purposes.
  * 
+ * WARNING: There will be a memory leak if job instantiation failed.
+ *          Use with care.
+ * 
  * @author dmitrygusev
  *
  * @param <T>
@@ -54,6 +57,14 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
         });
     }
 
+    @Override
+    protected void finalize() throws Throwable
+    {
+        super.finalize();
+        
+        removeListener();
+    }
+    
     @Override
     public String getName()
     {
@@ -193,9 +204,20 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
     {
         synchronized (monitor)
         {
+            long timeoutMillis = unit.toMillis(timeout);
+            
+            long deadline = System.currentTimeMillis() + timeoutMillis;
+            
             while (!isDone())
             {
-                monitor.wait(unit.toMillis(timeout));
+                monitor.wait(timeoutMillis);
+                
+                timeoutMillis = deadline - System.currentTimeMillis();
+                
+                if (timeoutMillis <= 0)
+                {
+                    throw new TimeoutException();
+                }
             }
         }
         return (T) result;

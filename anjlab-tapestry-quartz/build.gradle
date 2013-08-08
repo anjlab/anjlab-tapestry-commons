@@ -3,6 +3,13 @@ version = '1.0.0'
 dependencies {
     compile 'org.quartz-scheduler:quartz:2.2.0'
     compile 'javax.servlet:servlet-api:2.5'
+    
+    testCompile 'junit:junit:4.8.2'
+    testCompile "org.mockito:mockito-all:1.9.5"
+    testCompile ("org.apache.tapestry:tapestry-test:${project.tapestry_version}") {
+        exclude group: "org.apache.httpcomponents", module: "httpclient"
+        exclude group: "org.apache.httpcomponents", module: "httpcore"
+    }
 }
 
 jar {
