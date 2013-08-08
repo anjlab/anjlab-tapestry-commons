@@ -57,7 +57,7 @@ TODO Deploy `anjlab-tapestry-quartz` binaries to public repository.
    }
    ```
 
- 2. `@Inject` instance of `org.quartz.Scheduler` to your services and schedule the job for execution:
+ 2. `@Inject` instance of `org.quartz.Scheduler` to your page/service and schedule the job for execution:
 
     ``` java
         JobDetail job = JobBuilder.newJob(HelloJob.class).build();
