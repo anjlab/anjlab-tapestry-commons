@@ -88,7 +88,7 @@ String result = future.get(5, TimeUnit.SECONDS);
 Assert.assertEquals("username = John Smith, app version = " + appVersion, result);
 ```
 
-See `SchedulerTest` for example of using `QuartzJobFuture` for unit-testing of Quartz jobs.
+See `SchedulerTest` for example of using `QuartzJobFuture`.
 
 ### Configuring Quartz
 
