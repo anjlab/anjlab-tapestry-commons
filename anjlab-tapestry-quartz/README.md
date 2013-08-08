@@ -133,4 +133,4 @@ Application symbol exists to control Quartz scheduler shutdown policy (default v
 QuartzModule.WAIT_FOR_JOBS_TO_COMPLETE="org.quartz.scheduler.waitForJobsToComplete"
 ```
 
-[See here](http://quartz-scheduler.org/api/2.2.0/org/quartz/Scheduler.html#shutdown(boolean)) for details.
+[See here]( http://quartz-scheduler.org/api/2.2.0/org/quartz/Scheduler.html#shutdown(boolean) ) for details.
