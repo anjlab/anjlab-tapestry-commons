@@ -18,7 +18,7 @@ TODO Deploy `anjlab-tapestry-quartz` binaries to public repository.
    - this may be simple POJO;
    - this doesn't have to be registered as a Tapestry5 service;
    - you may use `@Inject` in this class as you usually do in Tapestry5 pages and services;
-   - instances of this job class will be created using [Registry.autobuild()](http://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/ObjectLocator.html#autobuild(java.lang.Class)) method;
+   - instances of this job class will be created using <a href="http://tapestry.apache.org/current/apidocs/org/apache/tapestry5/ioc/ObjectLocator.html#autobuild(java.lang.Class)">Registry.autobuild()</a> method;
    - plus you will get the same behaviour as Quartz's default JobFactory:
 
      > If you add setter methods to your job class that correspond to the names of keys
@@ -133,4 +133,4 @@ Application symbol exists to control Quartz scheduler shutdown policy (default v
 QuartzModule.WAIT_FOR_JOBS_TO_COMPLETE="org.quartz.scheduler.waitForJobsToComplete"
 ```
 
-[See here]( http://quartz-scheduler.org/api/2.2.0/org/quartz/Scheduler.html#shutdown(boolean) ) for details.
+<a href="http://quartz-scheduler.org/api/2.2.0/org/quartz/Scheduler.html#shutdown(boolean)">See here</a> for details.
