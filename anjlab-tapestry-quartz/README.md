@@ -57,7 +57,7 @@ TODO Deploy `anjlab-tapestry-quartz` binaries to public repository.
    }
    ```
 
- 2. `@Inject` instance of `org.quartz.Scheduler` to your services and schedule the job for execution:
+ 2. `@Inject` instance of `org.quartz.Scheduler` to your page/service and schedule the job for execution:
 
     ``` java
         JobDetail job = JobBuilder.newJob(HelloJob.class).build();
@@ -88,7 +88,7 @@ String result = future.get(5, TimeUnit.SECONDS);
 Assert.assertEquals("username = John Smith, app version = " + appVersion, result);
 ```
 
-See `SchedulerTest` for example of using `QuartzJobFuture` for unit-testing of Quartz jobs.
+See `SchedulerTest` for example of using `QuartzJobFuture`.
 
 ### Configuring Quartz
 
