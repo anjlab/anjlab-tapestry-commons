@@ -61,7 +61,7 @@ You can tell liquibase to run these changesets by contributing parameters to app
 This module uses [Liquibase servlet listener](http://www.liquibase.org/documentation/servlet_listener.html)
 to run the changesets.
 
-LiquibaseModule unifies configuration parameters for both 1.9.x and 2.x Liquibase versions:
+LiquibaseModule unifies configuration parameters to support both Liquibase 1.9.x and 2.x:
 
 ``` java
     public static final String LIQUIBASE_VERSION = "liquibase.version";
