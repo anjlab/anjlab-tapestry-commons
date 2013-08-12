@@ -1,1 +1,1 @@
-include 'anjlab-tapestry-commons', 'anjlab-tapestry-quartz'
+include 'anjlab-tapestry-commons', 'anjlab-tapestry-quartz', 'anjlab-tapestry-liquibase'
