@@ -1,4 +1,9 @@
 version = '1.2.3'
+description = 'Commons for Tapestry5'
+
+bintray.pkg.name = name
+bintray.pkg.desc = description
+bintray.pkg.labels = []
 
 dependencies {
     compile "commons-io:commons-io:2.4"
