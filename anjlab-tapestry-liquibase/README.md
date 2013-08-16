@@ -112,4 +112,7 @@ Default parameter values are:
         
         configuration.add(LIQUIBASE_FAIL_ON_ERROR, "true");
         configuration.add(LIQUIBASE_SHOULD_RUN, "true");
+        
+        // ...
+    }
 ```
