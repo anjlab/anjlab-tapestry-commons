@@ -1,1 +1,3 @@
 include 'anjlab-tapestry-commons', 'anjlab-tapestry-quartz', 'anjlab-tapestry-liquibase'
+
+rootProject.name = 'anjlab-tapestry-commons-parent'
