@@ -6,7 +6,7 @@ buildscript {
         maven { url 'http://jcenter.bintray.com' }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3-SNAPSHOT'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.5.0'
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.1'
     }
@@ -73,7 +73,6 @@ subprojects {
     bintray {
         user = "$System.env.bintray_user"
         key = "$System.env.bintray_api_key"
-        configurations = []
         publications = ['mavenJava']
         pkg {
             repo = 'maven'
