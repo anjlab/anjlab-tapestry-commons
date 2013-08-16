@@ -7,10 +7,31 @@ You may use it instead of [ParallelExecutor](http://tapestry.apache.org/parallel
 
 ### Installation
 
-This JAR is a Tapestry5 drop-in module and it will register itself
-if you add `anjlab-tapestry-quartz-x.x.x` as a dependency to your app using your build tool (like Maven or Gradle).
+This JAR is a Tapestry5 drop-in module and it will register itself if you 
+add `anjlab-tapestry-quartz` as a dependency to your app using your build tool
+and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-repository):
 
-TODO Deploy `anjlab-tapestry-quartz` binaries to public repository.
+#### Maven
+```xml
+<dependencies>
+...
+   <dependency>
+       <groupId>com.anjlab.tapestry5</groupId>
+       <artifactId>anjlab-tapestry-quartz</artifactId>
+       <version>1.0.0</version>
+   </dependency>
+...
+</dependencies>
+```
+
+#### Gradle
+```groovy
+dependencies {
+    ...
+    compile 'com.anjlab.tapestry5:anjlab-tapestry-quartz:1.0.0'
+    ...
+}
+```
 
 ### Usage
 
