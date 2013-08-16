@@ -1,27 +1,34 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'http://repo.springsource.org/plugins-release' }
+        maven { url 'http://jcenter.bintray.com' }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.5.0'
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.1'
+    }
+}
+
 allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'maven'
-    apply plugin: 'license'   
-
+    apply plugin: 'maven-publish'
+    apply plugin: 'license'
+    
     group = 'com.anjlab.tapestry5'
-
+    
     license {
         header rootProject.file('LICENSE')
         strictCheck true
     }
+    
+    apply plugin: 'propdeps'
+    apply plugin: 'propdeps-maven'
+    apply plugin: 'propdeps-eclipse'
 }
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.5.0'
-    }
-}
-
-eclipse { project { name "anjlab-tapestry-commons-parent" } }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '1.7'
@@ -52,20 +59,78 @@ subprojects {
         def logback_version = '1.0.13'
         
         compile "org.slf4j:slf4j-api:${slf4j_version}"
-        compile "org.slf4j:jcl-over-slf4j:${slf4j_version}"
-        compile "org.slf4j:log4j-over-slf4j:${slf4j_version}"
+        runtime "org.slf4j:jcl-over-slf4j:${slf4j_version}"
+        runtime "org.slf4j:log4j-over-slf4j:${slf4j_version}"
         
-        compile "ch.qos.logback:logback-core:${logback_version}"
-        compile "ch.qos.logback:logback-classic:${logback_version}"
+        runtime "ch.qos.logback:logback-core:${logback_version}"
+        runtime "ch.qos.logback:logback-classic:${logback_version}"
         
-        compile "org.apache.tapestry:tapestry-core:${tapestry_version}"
+        provided "org.apache.tapestry:tapestry-core:${tapestry_version}"
     }
     
-    /*
-    jar {
-        manifest {
-            attributes("Tapestry-Module-Classes": "com.anjlab.tapestry5.services.XModule")
+    apply plugin: 'bintray'
+    
+    bintray {
+        user = "$System.env.bintray_user"
+        key = "$System.env.bintray_api_key"
+        publications = ['mavenJava']
+        pkg {
+            repo = 'maven'
+            userOrg = 'anjlab' // an optional organization name when the repo belongs to one of the user's orgs
+            licenses = ['Apache-2.0']
+        }
+        dryRun = false // whether to run this as dry-run, without deploying
+    }
+    
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allSource
+        classifier = 'sources'
+    }
+    
+    jar.dependsOn sourcesJar
+    
+    def pomFragments = {
+        licenses {
+            license {
+                name "The Apache Software License, Version 2.0"
+                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution "repo"
+            }
+        }
+        developers {
+            developer {
+                id "dmitrygusev"
+                name "Dmitry Gusev"
+                email "dmitry@anjlab.com"
+            }
         }
     }
-    */
+    
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                
+                pom.withXml {
+                    def root = asNode()
+                    
+                    def deps = root.children().find {
+                        it.name().localPart == 'dependencies'
+                    }
+                    
+                    root.children().remove(deps)
+                    
+                    root.appendNode('description', project.description)
+                    root.children().last() + pomFragments
+                    
+                    def pom = new XmlParser().parse(project.file("build/poms/pom-default.xml"))
+                    
+                    pom.dependencies.each {
+                        root.append(it)
+                    }
+                }
+            }
+        }
+    }
 }
