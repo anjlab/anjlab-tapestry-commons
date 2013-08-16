@@ -5,26 +5,6 @@ This module allows you to use [Quartz scheduler](http://quartz-scheduler.org) in
 
 You may use it instead of [ParallelExecutor](http://tapestry.apache.org/parallel-execution.html).
 
-### Installation
-
-This JAR is a Tapestry5 drop-in module and it will register itself if you 
-add `anjlab-tapestry-quartz` as a dependency to your app using your build tool
-and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-repository):
-
-#### Maven
-```xml
-<dependency>
-    <groupId>com.anjlab.tapestry5</groupId>
-    <artifactId>anjlab-tapestry-quartz</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-#### Gradle
-```groovy
-compile 'com.anjlab.tapestry5:anjlab-tapestry-quartz:1.0.0'
-```
-
 ### Usage
 
  1. Define your job class:
@@ -147,3 +127,22 @@ QuartzModule.WAIT_FOR_JOBS_TO_COMPLETE="org.quartz.scheduler.waitForJobsToComple
 ```
 
 <a href="http://quartz-scheduler.org/api/2.2.0/org/quartz/Scheduler.html#shutdown(boolean)">See here</a> for details.
+
+### Installation
+This JAR is a Tapestry5 drop-in module and it will register itself if you 
+add `anjlab-tapestry-quartz` as a dependency to your app using your build tool
+and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-repository):
+
+#### Maven
+```xml
+<dependency>
+    <groupId>com.anjlab.tapestry5</groupId>
+    <artifactId>anjlab-tapestry-quartz</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+#### Gradle
+```groovy
+compile 'com.anjlab.tapestry5:anjlab-tapestry-quartz:1.0.0'
+```
