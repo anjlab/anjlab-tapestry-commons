@@ -8,9 +8,29 @@ runs liquibase changesets before your application starts serving requests.
 
 ### Installation
 This JAR is a Tapestry5 drop-in module and it will register itself if you 
-add `anjlab-tapestry-liquibase-x.x.x` as a dependency to your app using your build tool (like Maven or Gradle).
+add `anjlab-tapestry-liquibase` as a dependency to your app using your build tool (like Maven or Gradle):
 
-TODO Deploy anjlab-tapestry-liquibase binaries to public repository.
+#### Maven
+```xml
+<dependencies>
+...
+   <dependency>
+       <groupId>com.anjlab.tapestry5</groupId>
+       <artifactId>anjlab-tapestry-liquibase</artifactId>
+       <version>1.0.0</version>
+   </dependency>
+...
+</dependencies>
+```
+
+#### Gradle
+```groovy
+dependencies {
+    ...
+    compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.0.0'
+    ...
+}
+```
 
 ### Usage
 
