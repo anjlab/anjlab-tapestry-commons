@@ -6,25 +6,6 @@ Use LiquibaseModule to apply [Liquibase](http://www.liquibase.org) changesets to
 LiquibaseModule registers itself as Tapestry5 initializer filter and 
 runs liquibase changesets before your application starts serving requests.
 
-### Installation
-This JAR is a Tapestry5 drop-in module and it will register itself if you 
-add `anjlab-tapestry-liquibase` as a dependency to your app using your build tool
-and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-repository):
-
-#### Maven
-```xml
-<dependency>
-    <groupId>com.anjlab.tapestry5</groupId>
-    <artifactId>anjlab-tapestry-liquibase</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-#### Gradle
-```groovy
-compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.0.0'
-```
-
 ### Usage
 
 It is a [best practice](http://www.liquibase.org/bestpractices.html) to organize your liquibase changesets using a single
@@ -107,4 +88,23 @@ Default parameter values are:
         
         // ...
     }
+```
+
+### Installation
+This JAR is a Tapestry5 drop-in module and it will register itself if you 
+add `anjlab-tapestry-liquibase` as a dependency to your app using your build tool
+and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-repository):
+
+#### Maven
+```xml
+<dependency>
+    <groupId>com.anjlab.tapestry5</groupId>
+    <artifactId>anjlab-tapestry-liquibase</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+#### Gradle
+```groovy
+compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.0.0'
 ```
