@@ -13,24 +13,16 @@ and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-re
 
 #### Maven
 ```xml
-<dependencies>
-...
    <dependency>
        <groupId>com.anjlab.tapestry5</groupId>
        <artifactId>anjlab-tapestry-quartz</artifactId>
        <version>1.0.0</version>
    </dependency>
-...
-</dependencies>
 ```
 
 #### Gradle
 ```groovy
-dependencies {
-    ...
     compile 'com.anjlab.tapestry5:anjlab-tapestry-quartz:1.0.0'
-    ...
-}
 ```
 
 ### Usage
