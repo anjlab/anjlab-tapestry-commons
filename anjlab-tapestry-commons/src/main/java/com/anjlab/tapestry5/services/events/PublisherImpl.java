@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.plastic.InstanceContext;
 
 public class PublisherImpl implements Publisher
@@ -72,8 +74,36 @@ public class PublisherImpl implements Publisher
     }
 
     @Override
-    public boolean triggerEvent(String eventType, Object[] contextValues,
-            ComponentEventCallback<?> callback)
+    public boolean triggerContextEvent(final String eventType,
+                                final EventContext context,
+                                final ComponentEventCallback<?> callback)
+    {
+        return trigger(eventType, new Predicate<ComponentResources>()
+        {
+            @Override
+            public boolean accept(ComponentResources resources)
+            {
+                return resources.triggerContextEvent(eventType, context, callback);
+            }
+        });
+    }
+    
+    @Override
+    public boolean triggerEvent(final String eventType,
+                                final Object[] contextValues,
+                                final ComponentEventCallback<?> callback)
+    {
+        return trigger(eventType, new Predicate<ComponentResources>()
+        {
+            @Override
+            public boolean accept(ComponentResources resources)
+            {
+                return resources.triggerEvent(eventType, contextValues, callback);
+            }
+        });
+    }
+    
+    protected boolean trigger(String eventType, Predicate<ComponentResources> function)
     {
         Map<String, ComponentResources> subscribers = hub.get(eventType);
         
@@ -86,7 +116,7 @@ public class PublisherImpl implements Publisher
         
         for (ComponentResources resources : subscribers.values())
         {
-            result |= resources.triggerEvent(eventType, contextValues, callback);
+            result |= function.accept(resources);
         }
         
         return result;

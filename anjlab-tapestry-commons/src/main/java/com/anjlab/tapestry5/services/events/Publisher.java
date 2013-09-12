@@ -16,10 +16,32 @@
 package com.anjlab.tapestry5.services.events;
 
 import org.apache.tapestry5.ComponentEventCallback;
+import org.apache.tapestry5.ComponentResources;
+import org.apache.tapestry5.EventContext;
 
 public interface Publisher
 {
+    /**
+     * 
+     * @param eventType
+     * @param contextValues
+     * @param callback
+     * @return
+     * 
+     * @see ComponentResources#triggerEvent(String, Object[], ComponentEventCallback)
+     */
     boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback<?> callback);
+
+    /**
+     * 
+     * @param eventType
+     * @param context
+     * @param callback
+     * @return
+     * 
+     * @see ComponentResources#triggerContextEvent(String, EventContext, ComponentEventCallback)
+     */
+    boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback<?> callback);
 
     void subscribe(String eventType, Object listener);
 }
