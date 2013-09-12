@@ -15,12 +15,8 @@
  */
 package com.anjlab.tapestry5.services.quartz;
 
-import javax.servlet.ServletContext;
-
-import org.apache.tapestry5.TapestryFilter;
-import org.apache.tapestry5.ioc.Registry;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.services.ApplicationGlobals;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
@@ -33,7 +29,7 @@ import org.quartz.spi.TriggerFiredBundle;
 public class QuatrzJobFactory extends PropertySettingJobFactory implements JobFactory
 {
     @Inject
-    private ApplicationGlobals applicationGlobals;
+    private ObjectLocator objectLocator;
     
     @Override
     public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler)
@@ -42,16 +38,11 @@ public class QuatrzJobFactory extends PropertySettingJobFactory implements JobFa
         JobDetail jobDetail = bundle.getJobDetail();
         Class<? extends Job> jobClass = jobDetail.getJobClass();
         
-        ServletContext servletContext = applicationGlobals.getServletContext();
-        
-        Registry registry = (Registry)
-                servletContext.getAttribute(TapestryFilter.REGISTRY_CONTEXT_NAME);
-        
         Job job;
         
         try
         {
-            job = registry.autobuild(jobClass);
+            job = objectLocator.autobuild(jobClass);
         }
         catch (Exception e)
         {
