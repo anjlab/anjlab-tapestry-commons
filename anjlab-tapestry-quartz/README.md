@@ -138,7 +138,7 @@ and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-re
 <dependency>
     <groupId>com.anjlab.tapestry5</groupId>
     <artifactId>anjlab-tapestry-quartz</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
