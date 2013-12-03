@@ -24,10 +24,24 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.services.ComponentClasses;
+import org.apache.tapestry5.services.InvalidationEventHub;
+import org.apache.tapestry5.services.InvalidationListener;
 
-public class PublisherImpl implements Publisher
+public class PublisherImpl implements Publisher, InvalidationListener
 {
     private Map<String, Map<String, ComponentResources>> hub = new HashMap<String, Map<String, ComponentResources>>();
+    
+    public PublisherImpl(@ComponentClasses InvalidationEventHub invalidationHub)
+    {
+        invalidationHub.addInvalidationListener(this);
+    }
+    
+    @Override
+    public void objectWasInvalidated()
+    {
+        hub.clear();
+    }
     
     @Override
     public void subscribe(String eventType, Object listener)
@@ -60,11 +74,7 @@ public class PublisherImpl implements Publisher
             
             String listenerKey = resources.getCompleteId();
             
-            if (subscribers.containsKey(listenerKey))
-            {
-                return;
-            }
-            
+            //  Overwrite if exists
             subscribers.put(listenerKey, resources);
         }
         catch (Exception e)
