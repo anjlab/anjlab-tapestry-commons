@@ -6,7 +6,7 @@ bintray.pkg.desc = description
 bintray.pkg.labels = []
 
 dependencies {
-    compile 'org.liquibase:liquibase-core:3.1.0-SNAPSHOT'
+    compile 'org.liquibase:liquibase-core:3.1.0'
     provided 'javax.servlet:javax.servlet-api:3.1.0'
 }
 
