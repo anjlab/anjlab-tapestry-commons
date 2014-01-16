@@ -67,8 +67,8 @@ subprojects {
     apply plugin: 'bintray'
     
     bintray {
-        user = "$System.env.bintray_user"
-        key = "$System.env.bintray_api_key"
+        user = "$bintray_user"
+        key = "$bintray_api_key"
         publications = ['mavenJava']
         pkg {
             repo = 'maven'
