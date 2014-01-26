@@ -16,6 +16,7 @@
 package com.anjlab.tapestry5.services.events;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,23 +25,51 @@ import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.plastic.InstanceContext;
+import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClasses;
 import org.apache.tapestry5.services.InvalidationEventHub;
 import org.apache.tapestry5.services.InvalidationListener;
+import org.apache.tapestry5.services.Request;
+
+import com.anjlab.tapestry5.pages.PublisherSupport;
+import com.anjlab.tapestry5.services.events.internal.PublisherConfiguration;
 
 public class PublisherImpl implements Publisher, InvalidationListener
 {
+    private Request request;
+    private PublisherConfiguration publisherConfiguration;
+    
     private Map<String, Map<String, ComponentResources>> hub = new HashMap<String, Map<String, ComponentResources>>();
     
-    public PublisherImpl(@ComponentClasses InvalidationEventHub invalidationHub)
+    public PublisherImpl(@ComponentClasses InvalidationEventHub invalidationHub,
+                         PublisherConfiguration publisherConfiguration,
+                         Request request,
+                         Collection<String> managedEvents)
     {
         invalidationHub.addInvalidationListener(this);
+        this.publisherConfiguration = publisherConfiguration;
+        this.publisherConfiguration.addManagedEvents(managedEvents);
+        this.request = request;
+    }
+    
+    @Override
+    public boolean isActivePage(Component page)
+    {
+        String pageName = (String) request.getAttribute(PublisherSupport.PARAMETER_ACTIVE_PAGE);
+        
+        if (pageName == null)
+        {
+            pageName = request.getParameter(PublisherSupport.PARAMETER_ACTIVE_PAGE);
+        }
+        
+        return page.getComponentResources().getPageName().equals(pageName);
     }
     
     @Override
     public void objectWasInvalidated()
     {
         hub.clear();
+        publisherConfiguration.clear();
     }
     
     @Override
@@ -75,7 +104,14 @@ public class PublisherImpl implements Publisher, InvalidationListener
             String listenerKey = resources.getCompleteId();
             
             //  Overwrite if exists
-            subscribers.put(listenerKey, resources);
+            ComponentResources overwritten = subscribers.put(listenerKey, resources);
+            
+            if (overwritten != null)
+            {
+                publisherConfiguration.removeListener(eventType, overwritten);
+            }
+            
+            publisherConfiguration.addListener(eventType, resources);
         }
         catch (Exception e)
         {

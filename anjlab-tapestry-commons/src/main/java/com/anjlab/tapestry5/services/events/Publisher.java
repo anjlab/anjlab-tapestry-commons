@@ -18,6 +18,7 @@ package com.anjlab.tapestry5.services.events;
 import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
+import org.apache.tapestry5.runtime.Component;
 
 public interface Publisher
 {
@@ -44,4 +45,6 @@ public interface Publisher
     boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback<?> callback);
 
     void subscribe(String eventType, Object listener);
+    
+    boolean isActivePage(Component page);
 }
