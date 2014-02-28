@@ -78,13 +78,24 @@ subprojects {
         dryRun = false // whether to run this as dry-run, without deploying
     }
     
-    task sourcesJar(type: Jar) {
+    task sourcesJar(type: Jar, dependsOn: classes) {
         from sourceSets.main.allSource
         classifier = 'sources'
     }
     
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        from javadoc.destinationDir
+        classifier = 'javadoc'
+    }
+
     jar.dependsOn sourcesJar
+    jar.dependsOn javadocJar
     
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
     def pomFragments = {
         licenses {
             license {
@@ -107,6 +118,7 @@ subprojects {
             mavenJava(MavenPublication) {
                 from components.java
                 artifact sourcesJar
+                artifact javadocJar
                 
                 pom.withXml {
                     def root = asNode()
