@@ -24,6 +24,7 @@ import org.apache.tapestry5.ComponentEventCallback;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.EventContext;
 import org.apache.tapestry5.func.Predicate;
+import org.apache.tapestry5.internal.services.RequestPageCache;
 import org.apache.tapestry5.plastic.InstanceContext;
 import org.apache.tapestry5.runtime.Component;
 import org.apache.tapestry5.services.ComponentClasses;
@@ -36,6 +37,7 @@ import com.anjlab.tapestry5.services.events.internal.PublisherConfiguration;
 
 public class PublisherImpl implements Publisher, InvalidationListener
 {
+    private RequestPageCache requestPageCache;
     private Request request;
     private PublisherConfiguration publisherConfiguration;
     
@@ -43,12 +45,14 @@ public class PublisherImpl implements Publisher, InvalidationListener
     
     public PublisherImpl(@ComponentClasses InvalidationEventHub invalidationHub,
                          PublisherConfiguration publisherConfiguration,
+                         RequestPageCache requestPageCache,
                          Request request,
                          Collection<String> managedEvents)
     {
         invalidationHub.addInvalidationListener(this);
         this.publisherConfiguration = publisherConfiguration;
         this.publisherConfiguration.addManagedEvents(managedEvents);
+        this.requestPageCache = requestPageCache;
         this.request = request;
     }
     
@@ -162,6 +166,9 @@ public class PublisherImpl implements Publisher, InvalidationListener
         
         for (ComponentResources resources : subscribers.values())
         {
+            //  Force attaching target page to current request
+            requestPageCache.get(resources.getPageName());
+            
             result |= function.accept(resources);
         }
         
