@@ -16,8 +16,10 @@
 package com.anjlab.tapestry5.services.events;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry5.ComponentEventCallback;
@@ -162,13 +164,25 @@ public class PublisherImpl implements Publisher, InvalidationListener
             return false;
         }
         
-        boolean result = false;
+        List<ComponentResources> affectedResources = new ArrayList<ComponentResources>();
         
         for (ComponentResources resources : subscribers.values())
         {
+            if (!isActivePage(resources.getPage()))
+            {
+                continue;
+            }
+            
             //  Force attaching target page to current request
             requestPageCache.get(resources.getPageName());
             
+            affectedResources.add(resources);
+        }
+        
+        boolean result = false;
+        
+        for (ComponentResources resources : affectedResources)
+        {
             result |= function.accept(resources);
         }
         
