@@ -26,13 +26,13 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigHelper
+public class ConfigHelper implements Configuration
 {
     private static final Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
     
     private Properties properties;
     
-    public static ConfigHelper fromClasspathResource(String resourceName) throws IOException
+    public static Configuration fromClasspathResource(String resourceName) throws IOException
     {
         logger.info("Reading config from classpath: {}", resourceName);
         InputStream input = ConfigHelper.class.getClassLoader().getResourceAsStream(resourceName);
@@ -43,19 +43,19 @@ public class ConfigHelper
         return new ConfigHelper(new AutoCloseInputStream(input));
     }
     
-    public static ConfigHelper fromSystemProperty(String property) throws IOException
+    public static Configuration fromSystemProperty(String property) throws IOException
     {
         String filename = System.getProperty(property);
         logger.info("Reading config from system property {}={}", property, filename);
         return new ConfigHelper(filename);
     }
     
-    public static ConfigHelper fromFile(String file) throws IOException
+    public static Configuration fromFile(String file) throws IOException
     {
         return new ConfigHelper(file);
     }
     
-    public static ConfigHelper fromFile(File file) throws IOException
+    public static Configuration fromFile(File file) throws IOException
     {
         return new ConfigHelper(file);
     }
@@ -71,7 +71,7 @@ public class ConfigHelper
         readProperties(configFile);
     }
     
-    public static ConfigHelper fromStream(InputStream input) throws IOException
+    public static Configuration fromStream(InputStream input) throws IOException
     {
         return new ConfigHelper(input);
     }
@@ -117,6 +117,7 @@ public class ConfigHelper
         properties.load(input);
     }
     
+    @Override
     public void addIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -125,6 +126,7 @@ public class ConfigHelper
         }
     }
     
+    @Override
     public void overrideIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -133,6 +135,7 @@ public class ConfigHelper
         }
     }
     
+    @Override
     public void override(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         assertPropertyDefined(propertyName, properties);
@@ -140,6 +143,7 @@ public class ConfigHelper
         configuration.override(propertyName, properties.get(propertyName));
     }
     
+    @Override
     public void add(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         assertPropertyDefined(propertyName, properties);
@@ -147,6 +151,7 @@ public class ConfigHelper
         configuration.add(propertyName, properties.get(propertyName));
     }
     
+    @Override
     public String get(String propertyName)
     {
         return properties.getProperty(propertyName);
@@ -159,5 +164,4 @@ public class ConfigHelper
             throw new IllegalStateException("Required property not defined: " + propertyName);
         }
     }
-
 }
