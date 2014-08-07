@@ -19,20 +19,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigHelper implements Configuration
+public class ConfigHelper
 {
     private static final Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
     
     private Properties properties;
     
-    public static Configuration fromClasspathResource(String resourceName) throws IOException
+    public static ConfigHelper fromClasspathResource(String resourceName) throws IOException
     {
         logger.info("Reading config from classpath: {}", resourceName);
         InputStream input = ConfigHelper.class.getClassLoader().getResourceAsStream(resourceName);
@@ -43,24 +46,39 @@ public class ConfigHelper implements Configuration
         return new ConfigHelper(new AutoCloseInputStream(input));
     }
     
-    public static Configuration fromSystemProperty(String property) throws IOException
+    public static ConfigHelper fromSystemProperty(String property) throws IOException
     {
         String filename = System.getProperty(property);
         logger.info("Reading config from system property {}={}", property, filename);
         return new ConfigHelper(filename);
     }
     
-    public static Configuration fromFile(String file) throws IOException
+    public static ConfigHelper fromFile(String file) throws IOException
     {
         return new ConfigHelper(file);
     }
     
-    public static Configuration fromFile(File file) throws IOException
+    public static ConfigHelper fromFile(File file) throws IOException
     {
         return new ConfigHelper(file);
     }
     
-    public ConfigHelper(String configFilename) throws IOException
+    public ConfigHelper()
+    {
+        this.properties = new Properties();
+    }
+    
+    public ConfigHelper(List<ConfigHelper> configuration)
+    {
+        this();
+        
+        for (ConfigHelper source : configuration)
+        {
+            copyFrom(source);
+        }
+    }
+    
+    private ConfigHelper(String configFilename) throws IOException
     {
         this(new File(configFilename));
     }
@@ -71,7 +89,7 @@ public class ConfigHelper implements Configuration
         readProperties(configFile);
     }
     
-    public static Configuration fromStream(InputStream input) throws IOException
+    public static ConfigHelper fromStream(InputStream input) throws IOException
     {
         return new ConfigHelper(input);
     }
@@ -117,7 +135,6 @@ public class ConfigHelper implements Configuration
         properties.load(input);
     }
     
-    @Override
     public void addIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -126,7 +143,6 @@ public class ConfigHelper implements Configuration
         }
     }
     
-    @Override
     public void overrideIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -135,7 +151,6 @@ public class ConfigHelper implements Configuration
         }
     }
     
-    @Override
     public void override(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         assertPropertyDefined(propertyName, properties);
@@ -143,7 +158,6 @@ public class ConfigHelper implements Configuration
         configuration.override(propertyName, properties.get(propertyName));
     }
     
-    @Override
     public void add(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         assertPropertyDefined(propertyName, properties);
@@ -151,10 +165,27 @@ public class ConfigHelper implements Configuration
         configuration.add(propertyName, properties.get(propertyName));
     }
     
-    @Override
+    public Set<String> names()
+    {
+        Set<String> names = new HashSet<String>();
+        for (Object key : properties.keySet())
+        {
+            names.add((String) key);
+        }
+        return names;
+    }
+    
     public String get(String propertyName)
     {
         return properties.getProperty(propertyName);
+    }
+    
+    public void copyFrom(ConfigHelper source)
+    {
+        for (String name : source.names())
+        {
+            properties.put(name, source.get(name));
+        }
     }
     
     private static void assertPropertyDefined(String propertyName, Properties properties)
