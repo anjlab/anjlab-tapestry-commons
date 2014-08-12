@@ -23,6 +23,7 @@ allprojects {
     license {
         header rootProject.file('LICENSE')
         strictCheck true
+        exclude '*.tml'
     }
     
     apply plugin: 'propdeps'
