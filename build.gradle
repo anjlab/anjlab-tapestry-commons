@@ -6,9 +6,9 @@ buildscript {
         maven { url 'http://jcenter.bintray.com' }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.3'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.5.0'
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.1'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
+        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
     }
 }
 
@@ -64,7 +64,7 @@ subprojects {
         provided "org.apache.tapestry:tapestry-core:${tapestry_version}"
     }
     
-    apply plugin: 'bintray'
+    apply plugin: 'com.jfrog.bintray'
     
     bintray {
         user = "$bintray_user"
@@ -97,13 +97,6 @@ subprojects {
     }
 
     def pomFragments = {
-        licenses {
-            license {
-                name "The Apache Software License, Version 2.0"
-                url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-                distribution "repo"
-            }
-        }
         developers {
             developer {
                 id "dmitrygusev"
@@ -130,6 +123,12 @@ subprojects {
                     root.children().remove(deps)
                     
                     root.appendNode('description', project.description)
+
+                    def license = root.appendNode('licenses').appendNode('license')
+                    license.appendNode("name", "The Apache Software License, Version 2.0")
+                    license.appendNode("url", "http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    license.appendNode("distribution", "repo")
+
                     root.children().last() + pomFragments
                     
                     def pom = new XmlParser().parse(project.file("build/poms/pom-default.xml"))
