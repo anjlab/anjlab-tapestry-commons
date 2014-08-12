@@ -27,7 +27,7 @@ public interface Publisher
      * @param eventType
      * @param contextValues
      * @param callback
-     * @return
+     * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
      * 
      * @see ComponentResources#triggerEvent(String, Object[], ComponentEventCallback)
      */
@@ -38,7 +38,7 @@ public interface Publisher
      * @param eventType
      * @param context
      * @param callback
-     * @return
+     * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
      * 
      * @see ComponentResources#triggerContextEvent(String, EventContext, ComponentEventCallback)
      */
