@@ -22,7 +22,9 @@ import java.lang.reflect.Method;
 import org.apache.tapestry5.ComponentAction;
 import org.apache.tapestry5.ComponentResources;
 import org.apache.tapestry5.Link;
+import org.apache.tapestry5.annotations.PageLoaded;
 import org.apache.tapestry5.corelib.internal.FormSupportImpl;
+import org.apache.tapestry5.internal.TapestryInternalUtils;
 import org.apache.tapestry5.internal.services.PageRenderQueue;
 import org.apache.tapestry5.internal.structure.Page;
 import org.apache.tapestry5.ioc.Configuration;
@@ -49,6 +51,7 @@ import org.apache.tapestry5.services.transform.ComponentClassTransformWorker2;
 import com.anjlab.tapestry5.pages.PublisherSupport;
 import com.anjlab.tapestry5.services.events.internal.PublisherConfiguration;
 import com.anjlab.tapestry5.services.events.internal.PublisherTriggersIntrospector;
+import com.anjlab.tapestry5.services.events.internal.SubscribeWorker;
 
 public class PublisherModule
 {
@@ -204,5 +207,14 @@ public class PublisherModule
         });
 
         return linkCreationHub;
+    }
+
+    @Contribute(ComponentClassTransformWorker2.class)
+    public static void provideTransformWorkers(
+            OrderedConfiguration<ComponentClassTransformWorker2> configuration)
+    {
+        String pageLoadedName = TapestryInternalUtils.lastTerm(PageLoaded.class.getName());
+
+        configuration.addInstance("SubscribeWorker", SubscribeWorker.class, "after:" + pageLoadedName);
     }
 }

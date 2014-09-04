@@ -45,6 +45,18 @@ public class PublisherImpl implements Publisher, InvalidationListener
     
     private Map<String, Map<String, ComponentResources>> hub = new HashMap<String, Map<String, ComponentResources>>();
     
+    /**
+     * 
+     * @param invalidationHub
+     * @param publisherConfiguration
+     * @param requestPageCache
+     * @param request
+     * @param managedEvents
+     *            List of event types for which {@link PublisherSupport#PARAMETER_ACTIVE_PAGE}
+     *            parameter will always be added to event links.
+     *            Note that every event added via {@link #subscribe(String, Object)} is also a
+     *            managed event.
+     */
     public PublisherImpl(@ComponentClasses InvalidationEventHub invalidationHub,
                          PublisherConfiguration publisherConfiguration,
                          RequestPageCache requestPageCache,
