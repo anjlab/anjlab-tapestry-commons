@@ -1,6 +1,7 @@
 package com.anjlab.tapestry5.services.events;
 
 import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.COMPONENT;
 import static org.apache.tapestry5.ioc.annotations.AnnotationUseContext.PAGE;
@@ -18,15 +19,15 @@ import org.apache.tapestry5.ioc.annotations.UseWith;
  * This has the same effect as invoking {@link Publisher#subscribe(String, Object)} on target
  * component.
  */
-@Target(TYPE)
+@Target({ TYPE, METHOD })
 @Documented
 @Retention(RUNTIME)
 @Inherited
-@UseWith({ COMPONENT, PAGE })
+@UseWith({ COMPONENT, PAGE, })
 public @interface Subscribe
 {
     /**
      * List of event types this page / component will be subscribed to.
      */
-    String[] value();
+    String[] value() default "";
 }
