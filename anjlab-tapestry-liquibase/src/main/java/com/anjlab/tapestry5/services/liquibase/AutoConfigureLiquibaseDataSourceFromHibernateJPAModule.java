@@ -15,6 +15,9 @@
  */
 package com.anjlab.tapestry5.services.liquibase;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.spi.PersistenceUnitInfo;
@@ -66,6 +69,7 @@ public class AutoConfigureLiquibaseDataSourceFromHibernateJPAModule
             public void advise(MethodInvocation invocation)
             {
                 InitialContext ic = null;
+                DataSource dataSource = null;
                 try
                 {
                     // At first we tried to use the same instance of a data source that's used by
@@ -105,7 +109,7 @@ public class AutoConfigureLiquibaseDataSourceFromHibernateJPAModule
                     Class<?> connectionProviderClass = Class.forName(connectionProviderClassName);
                     Object connectionProvider = connectionProviderClass.newInstance();
                     ((Configurable) connectionProvider).configure(persistenceUnitInfo.getProperties());
-                    DataSource dataSource = ((Wrapped) connectionProvider).unwrap(DataSource.class);
+                    dataSource = ((Wrapped) connectionProvider).unwrap(DataSource.class);
 
                     ic = new InitialContext();
 
@@ -139,6 +143,18 @@ public class AutoConfigureLiquibaseDataSourceFromHibernateJPAModule
                         catch (NamingException e)
                         {
                             logger.error("Error closing InitialContext", e);
+                        }
+                    }
+
+                    if (dataSource instanceof Closeable)
+                    {
+                        try
+                        {
+                            ((Closeable) dataSource).close();
+                        }
+                        catch (IOException e)
+                        {
+                            logger.error("Error closing liquibase datasource", e);
                         }
                     }
                 }
