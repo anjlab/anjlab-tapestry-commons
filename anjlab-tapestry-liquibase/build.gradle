@@ -1,13 +1,20 @@
 version = '1.2.1'
 description = 'Liquibase for Tapestry5'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 bintray.pkg.name = name
 bintray.pkg.desc = description
 bintray.pkg.labels = []
 
+project.ext.hibernate_version="5.0.0.CR3"
+
 dependencies {
     compile 'org.liquibase:liquibase-core:3.1.0'
     provided 'javax.servlet:javax.servlet-api:3.1.0'
+    provided "org.apache.tapestry:tapestry-jpa:${project.tapestry_version}"
+    provided "org.hibernate:hibernate-core:${hibernate_version}"
 }
 
 jar {
