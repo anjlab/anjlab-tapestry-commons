@@ -90,6 +90,30 @@ Default parameter values are:
     }
 ```
 
+### Auto-configure Liquibase DataSource with Hibernate JPA
+Liquibase may use the same connection settings as Hibernate if you use it as JPA provider with official [`tapestry-jpa` integration](https://tapestry.apache.org/integrating-with-jpa.html).
+
+In order to do this add `AutoConfigureLiquibaseDataSourceFromHibernateJPAModule` class as a submodule to your `AppModule`:
+``` java
+@SubModule({
+        AutoConfigureLiquibaseDataSourceFromHibernateJPAModule.class
+})
+public class AppModule
+```
+
+By default it will take settings from the first persistence unit declared in your `persistence.xml`.
+
+You can also specify a name of persistence unit explicitly:
+``` java
+    public static void contributeApplicationDefaults(
+            MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(
+            AutoConfigureLiquibaseDataSourceFromHibernateJPAModule.LIQUIBASE_PERSISTENCE_UNIT_NAME,
+            "my-pu");
+    }
+```
+
 ### Installation
 This JAR is a Tapestry5 drop-in module and it will register itself if you 
 add `anjlab-tapestry-liquibase` as a dependency to your app using your build tool
@@ -100,11 +124,11 @@ and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-re
 <dependency>
     <groupId>com.anjlab.tapestry5</groupId>
     <artifactId>anjlab-tapestry-liquibase</artifactId>
-    <version>1.0.0</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 
 #### Gradle
 ```groovy
-compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.0.0'
+compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.3.0'
 ```
