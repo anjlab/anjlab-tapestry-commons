@@ -15,6 +15,8 @@
  */
 package com.anjlab.tapestry5.services.liquibase;
 
+import java.util.Map;
+
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
@@ -74,4 +76,22 @@ public class LiquibaseModule
         }
     }
 
+    public void contributeLiquibaseInitializer(
+            OrderedConfiguration<LiquibaseConfigurer> configuration)
+    {
+        configuration.add("default", new LiquibaseConfigurer()
+        {
+            @Override
+            public String getConfigurationName()
+            {
+                return "default";
+            }
+
+            @Override
+            public void configure(Map<String, String> configuration)
+            {
+                // NOOP
+            }
+        }, "before:*");
+    }
 }

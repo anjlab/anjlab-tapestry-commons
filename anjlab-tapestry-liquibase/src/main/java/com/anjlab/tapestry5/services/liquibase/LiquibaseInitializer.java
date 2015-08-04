@@ -15,8 +15,10 @@
  */
 package com.anjlab.tapestry5.services.liquibase;
 
+import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;
 
+@UsesOrderedConfiguration(LiquibaseConfigurer.class)
 public interface LiquibaseInitializer extends ApplicationInitializerFilter
 {
 
