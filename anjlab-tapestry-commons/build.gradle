@@ -1,4 +1,4 @@
-version = '1.6.2'
+version = '1.6.3'
 description = 'Commons for Tapestry5'
 
 bintray.pkg.name = name
