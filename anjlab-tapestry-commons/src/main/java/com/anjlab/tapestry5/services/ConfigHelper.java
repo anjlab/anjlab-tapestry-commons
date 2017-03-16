@@ -15,24 +15,33 @@
  */
 package com.anjlab.tapestry5.services;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import static org.apache.commons.io.FileUtils.getFile;
+
 public class ConfigHelper
 {
     private static final Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
-    
+
+    public static final String EXTEND = "extend";
+
+    private File configFile;
+
+    private String resourceName;
+
     private Properties properties;
     
     public static ConfigHelper fromClasspathResource(String resourceName) throws IOException
@@ -43,7 +52,7 @@ public class ConfigHelper
         {
             throw new IOException("Classpath resource not found: " + resourceName);
         }
-        return new ConfigHelper(new AutoCloseInputStream(input));
+        return new ConfigHelper(new AutoCloseInputStream(input), resourceName);
     }
     
     public static ConfigHelper fromSystemProperty(String property) throws IOException
@@ -86,16 +95,18 @@ public class ConfigHelper
     private ConfigHelper(File configFile) throws IOException
     {
         logger.info("Reading config from file: {}", configFile.getAbsoluteFile());
+        this.configFile = configFile;
         readProperties(configFile);
     }
     
     public static ConfigHelper fromStream(InputStream input) throws IOException
     {
-        return new ConfigHelper(input);
+        return new ConfigHelper(input, null);
     }
     
-    private ConfigHelper(InputStream input) throws IOException
+    private ConfigHelper(InputStream input, String resourceName) throws IOException
     {
+        this.resourceName = resourceName;
         readProperties(input);
     }
     
@@ -133,8 +144,53 @@ public class ConfigHelper
     {
         properties = new Properties();
         properties.load(input);
+
+        List<ConfigHelper> extensions = new ArrayList<ConfigHelper>();
+
+        if (properties.containsKey(EXTEND))
+        {
+            extensions.add(fromExtend(properties.getProperty(EXTEND)));
+        }
+
+        //  Support multiple ordered extensions
+        boolean canContinue = true;
+
+        for (int i = 0; canContinue; i++)
+        {
+            String key = EXTEND + "." + i;
+
+            if (properties.containsKey(key))
+            {
+                extensions.add(fromExtend(properties.getProperty(key)));
+            }
+            else
+            {
+                //  Support 0 and 1 based offsets
+                canContinue = i < 1;
+            }
+        }
+
+        extendFrom(new ConfigHelper(extensions));
     }
-    
+
+    private ConfigHelper fromExtend(String relativePath) throws IOException
+    {
+        if (configFile != null)
+        {
+            return ConfigHelper.fromFile(getFile(configFile.getParentFile(), relativePath));
+        }
+        else if (resourceName != null)
+        {
+            File parentFile = new File(resourceName).getParentFile();
+            String basePath = new File(parentFile, relativePath).getPath();
+            return ConfigHelper.fromClasspathResource(basePath);
+        }
+        else
+        {
+            throw new RuntimeException("Unable to resolve relative path: " + relativePath);
+        }
+    }
+
     public void addIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -187,7 +243,18 @@ public class ConfigHelper
             properties.put(name, source.get(name));
         }
     }
-    
+
+    private void extendFrom(ConfigHelper source)
+    {
+        for (String name : source.names())
+        {
+            if (!properties.containsKey(name))
+            {
+                properties.put(name, source.get(name));
+            }
+        }
+    }
+
     private static void assertPropertyDefined(String propertyName, Properties properties)
     {
         if (!properties.containsKey(propertyName))
