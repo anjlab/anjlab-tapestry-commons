@@ -7,9 +7,11 @@ bintray.pkg.labels = []
 
 dependencies {
     compile 'org.quartz-scheduler:quartz:2.2.0'
-    provided 'javax.servlet:servlet-api:2.5'
-    
-    testCompile 'junit:junit:4.8.2'
+
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly "org.apache.tapestry:tapestry-core:${tapestry_version}"
+
+    testCompile "org.apache.tapestry:tapestry-core:${tapestry_version}"
     testCompile "org.mockito:mockito-all:1.9.5"
     testCompile ("org.apache.tapestry:tapestry-test:${project.tapestry_version}") {
         exclude group: "org.apache.httpcomponents", module: "httpclient"

@@ -1,15 +1,6 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven { url 'http://repo.springsource.org/plugins-release' }
-        maven { url 'http://jcenter.bintray.com' }
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.5'
-        classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
-    }
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+    id "com.github.hierynomus.license" version "0.14.0"
 }
 
 allprojects {
@@ -17,22 +8,18 @@ allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'license'
-    
+
     group = 'com.anjlab.tapestry5'
-    
+
     license {
         header rootProject.file('LICENSE')
         skipExistingHeaders true
         strictCheck true
         exclude '*.tml'
     }
-    
-    apply plugin: 'propdeps'
-    apply plugin: 'propdeps-maven'
-    apply plugin: 'propdeps-eclipse'
 }
 
-project.ext.tapestry_version='5.3.7'
+project.ext.tapestry_version = '5.4.2'
 
 configurations {
     all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
@@ -43,31 +30,29 @@ configurations {
 
 subprojects {
     apply plugin: 'java'
-    
+
     sourceCompatibility = 1.6
     targetCompatibility = 1.6
-    
+
     repositories {
         mavenLocal()
         mavenCentral()
     }
-    
+
     dependencies {
         def slf4j_version = '1.7.5'
         def logback_version = '1.0.13'
-        
+
         compile "org.slf4j:slf4j-api:${slf4j_version}"
         runtime "org.slf4j:jcl-over-slf4j:${slf4j_version}"
         runtime "org.slf4j:log4j-over-slf4j:${slf4j_version}"
-        
+
         runtime "ch.qos.logback:logback-core:${logback_version}"
         runtime "ch.qos.logback:logback-classic:${logback_version}"
-        
-        provided "org.apache.tapestry:tapestry-core:${tapestry_version}"
+
+        testCompile 'junit:junit:4.8.2'
     }
-    
-    apply plugin: 'com.jfrog.bintray'
-    
+
     bintray {
         user = "$bintray_user"
         key = "$bintray_api_key"
@@ -79,12 +64,12 @@ subprojects {
         }
         dryRun = false // whether to run this as dry-run, without deploying
     }
-    
+
     task sourcesJar(type: Jar, dependsOn: classes) {
         from sourceSets.main.allSource
         classifier = 'sources'
     }
-    
+
     task javadocJar(type: Jar, dependsOn: javadoc) {
         from javadoc.destinationDir
         classifier = 'javadoc'
@@ -92,7 +77,7 @@ subprojects {
 
     jar.dependsOn sourcesJar
     jar.dependsOn javadocJar
-    
+
     artifacts {
         archives sourcesJar
         archives javadocJar
@@ -107,23 +92,20 @@ subprojects {
             }
         }
     }
-    
+
     publishing {
         publications {
             mavenJava(MavenPublication) {
                 from components.java
                 artifact sourcesJar
                 artifact javadocJar
-                
+                groupId project.group
+                artifactId project.name
+                version project.version
+
                 pom.withXml {
                     def root = asNode()
-                    
-                    def deps = root.children().find {
-                        it.name().localPart == 'dependencies'
-                    }
-                    
-                    root.children().remove(deps)
-                    
+
                     root.appendNode('description', project.description)
 
                     def license = root.appendNode('licenses').appendNode('license')
@@ -132,12 +114,6 @@ subprojects {
                     license.appendNode("distribution", "repo")
 
                     root.children().last() + pomFragments
-                    
-                    def pom = new XmlParser().parse(project.file("build/poms/pom-default.xml"))
-                    
-                    pom.dependencies.each {
-                        root.append(it)
-                    }
                 }
             }
         }

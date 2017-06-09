@@ -6,13 +6,14 @@ bintray.pkg.desc = description
 bintray.pkg.labels = []
 
 dependencies {
-    compile "commons-io:commons-io:2.4"
-    testCompile 'junit:junit:4.8.2'
-    testCompile ("org.apache.tapestry:tapestry-test:${project.tapestry_version}") {
+    compileOnly "org.apache.tapestry:tapestry-core:${tapestry_version}"
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly 'ch.qos.logback:logback-core:1.0.13'
+    compileOnly 'ch.qos.logback:logback-classic:1.0.13'
+
+    testCompile "org.apache.tapestry:tapestry-core:${tapestry_version}"
+    testCompile("org.apache.tapestry:tapestry-test:${project.tapestry_version}") {
         exclude group: "org.apache.httpcomponents", module: "httpclient"
         exclude group: "org.apache.httpcomponents", module: "httpcore"
     }
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
-    provided 'ch.qos.logback:logback-core:1.0.13'
-    provided 'ch.qos.logback:logback-classic:1.0.13'
 }
