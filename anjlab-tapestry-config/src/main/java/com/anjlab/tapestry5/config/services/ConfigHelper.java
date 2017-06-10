@@ -47,10 +47,9 @@ public class ConfigHelper
     private final Set<String> referenced = new HashSet<String>();
 
     /**
+     * Creates an instance of {@link ConfigHelper} and load properties from resource on classpath.
      *
-     * @param resourceName
-     * @return
-     * @throws IOException
+     * @see ClassLoader#getResourceAsStream(String)
      */
     public static ConfigHelper fromClasspathResource(String resourceName) throws IOException
     {
@@ -63,6 +62,9 @@ public class ConfigHelper
         return new ConfigHelper(new AutoCloseInputStream(input), resourceName);
     }
 
+    /**
+     * Creates an instance of {@link ConfigHelper} and load properties from file with filename specified by system property.
+     */
     public static ConfigHelper fromSystemProperty(String property) throws IOException
     {
         String filename = System.getProperty(property);
@@ -70,21 +72,44 @@ public class ConfigHelper
         return new ConfigHelper(filename);
     }
 
+    /**
+     * Creates an instance of {@link ConfigHelper} and load properties from file with given name.
+     */
     public static ConfigHelper fromFile(String file) throws IOException
     {
         return new ConfigHelper(file);
     }
 
+    /**
+     * Creates an instance of {@link ConfigHelper} and load properties from given {@link File}.
+     */
     public static ConfigHelper fromFile(File file) throws IOException
     {
         return new ConfigHelper(file);
     }
 
+    /**
+     * Creates an instance of {@link ConfigHelper} and load properties from given {@link InputStream}.
+     */
+    public static ConfigHelper fromStream(InputStream input) throws IOException
+    {
+        return new ConfigHelper(input, null);
+    }
+
+    /**
+     * Creates an empty instance of {@link ConfigHelper}.
+     */
     public ConfigHelper()
     {
         this.properties = new Properties();
     }
 
+    /**
+     * Constructor for Tapestry IoC service.
+     * <p>
+     * {@link ConfigHelper}s from given <code>configuration</code> will be copied into new instance
+     * using <code>this.{@link #copyFrom(ConfigHelper)}</code>.
+     */
     public ConfigHelper(List<ConfigHelper> configuration)
     {
         this();
@@ -105,11 +130,6 @@ public class ConfigHelper
         logger.info("Reading config from file: {}", configFile.getAbsoluteFile());
         this.configFile = configFile;
         readProperties(configFile);
-    }
-
-    public static ConfigHelper fromStream(InputStream input) throws IOException
-    {
-        return new ConfigHelper(input, null);
     }
 
     private ConfigHelper(InputStream input, String resourceName) throws IOException
@@ -199,6 +219,12 @@ public class ConfigHelper
         }
     }
 
+    /**
+     * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>
+     * only if it exists in this {@link ConfigHelper}.
+     *
+     * @see MappedConfiguration#add(Object, Object)
+     */
     public void addIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -208,6 +234,12 @@ public class ConfigHelper
         }
     }
 
+    /**
+     * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>
+     * only if it exists in this {@link ConfigHelper}.
+     *
+     * @see MappedConfiguration#override(Object, Object)
+     */
     public void overrideIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
         if (properties.containsKey(propertyName))
@@ -217,15 +249,13 @@ public class ConfigHelper
         }
     }
 
-    public void override(String propertyName, MappedConfiguration<String, Object> configuration)
-    {
-        assertPropertyDefined(propertyName, properties);
-
-        configuration.override(propertyName, properties.get(propertyName));
-        referenced.add(propertyName);
-    }
-
-    public void add(String propertyName, MappedConfiguration<String, Object> configuration)
+    /**
+     * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>.
+     *
+     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
+     * @see MappedConfiguration#add(Object, Object)
+     */
+    public void add(String propertyName, MappedConfiguration<String, Object> configuration) throws IllegalStateException
     {
         assertPropertyDefined(propertyName, properties);
 
@@ -233,6 +263,23 @@ public class ConfigHelper
         referenced.add(propertyName);
     }
 
+    /**
+     * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>.
+     *
+     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
+     * @see MappedConfiguration#override(Object, Object)
+     */
+    public void override(String propertyName, MappedConfiguration<String, Object> configuration) throws IllegalStateException
+    {
+        assertPropertyDefined(propertyName, properties);
+
+        configuration.override(propertyName, properties.get(propertyName));
+        referenced.add(propertyName);
+    }
+
+    /**
+     * @return Names of all properties from this {@link ConfigHelper}.
+     */
     public Set<String> names()
     {
         Set<String> names = new HashSet<String>();
@@ -243,11 +290,27 @@ public class ConfigHelper
         return names;
     }
 
+    /**
+     * @return Names of all properties from this {@link ConfigHelper} that were referenced using one of the following methods:
+     * <ul>
+     * <li>{@link #add(String, MappedConfiguration)}</li>
+     * <li>{@link #addIfExists(String, MappedConfiguration)}</li>
+     * <li>{@link #override(String, MappedConfiguration)}</li>
+     * <li>{@link #overrideIfExists(String, MappedConfiguration)}</li>
+     * <li>{@link #get(String)}</li>
+     * </ul>
+     * <p>
+     * All properties not referenced using one of the above methods will be considered unused and will be reported
+     * by the {@link UnreferencedPropertiesValidator}.
+     */
     public Set<String> getReferenced()
     {
         return Collections.unmodifiableSet(referenced);
     }
 
+    /**
+     * @return Raw property value by its name or <code>null</code> if property doesn't exist.
+     */
     public String get(String propertyName)
     {
         referenced.add(propertyName);
@@ -255,6 +318,9 @@ public class ConfigHelper
         return properties.getProperty(propertyName);
     }
 
+    /**
+     * Copy properties from given {@link ConfigHelper} into this instance.
+     */
     public void copyFrom(ConfigHelper source)
     {
         for (String name : source.names())

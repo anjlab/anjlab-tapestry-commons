@@ -15,7 +15,23 @@
  */
 package com.anjlab.tapestry5.config.services;
 
+/**
+ * Logic for validation of {@link ConfigHelper} instance.
+ * <p>
+ * Contribute instance of this interface into {@link ConfigHelperInitializer}:
+ * <pre>
+ * public void contributeConfigHelperInitializer(OrderedConfiguration<ConfigHelperValidator> configuration)
+ * {
+ *     configuration.addInstance("CustomConfigValidator", CustomConfigValidator.class);
+ * }
+ * </pre>
+ */
 public interface ConfigHelperValidator
 {
-    void validate(ConfigHelper configHelper);
+    /**
+     * Validate given {@link ConfigHelper} and throw {@link RuntimeException} in case of validation failure.
+     * <p>
+     * Throwing an exception will fail application startup.
+     */
+    void validate(ConfigHelper configHelper) throws RuntimeException;
 }

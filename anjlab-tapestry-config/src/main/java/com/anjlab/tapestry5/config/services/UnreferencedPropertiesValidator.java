@@ -19,6 +19,11 @@ import org.slf4j.Logger;
 
 import java.util.Set;
 
+/**
+ * Find all unreferenced properties in {@link ConfigHelper} and print names of the properties using {@link Logger}.
+ *
+ * @see ConfigHelper#getReferenced()
+ */
 public class UnreferencedPropertiesValidator implements ConfigHelperValidator
 {
     private final Logger logger;
