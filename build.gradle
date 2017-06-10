@@ -4,10 +4,9 @@ plugins {
 }
 
 allprojects {
-    apply plugin: 'eclipse'
+    apply plugin: 'license'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
-    apply plugin: 'license'
 
     group = 'com.anjlab.tapestry5'
 
@@ -53,6 +52,8 @@ subprojects {
         testCompile 'junit:junit:4.8.2'
     }
 
+    apply plugin: 'com.jfrog.bintray'
+
     bintray {
         user = "$bintray_user"
         key = "$bintray_api_key"
@@ -61,6 +62,7 @@ subprojects {
             repo = 'maven'
             userOrg = 'anjlab' // an optional organization name when the repo belongs to one of the user's orgs
             licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/anjlab/anjlab-tapestry-commons.git'
         }
         dryRun = false // whether to run this as dry-run, without deploying
     }
