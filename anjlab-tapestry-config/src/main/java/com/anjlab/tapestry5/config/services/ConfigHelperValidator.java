@@ -20,7 +20,7 @@ package com.anjlab.tapestry5.config.services;
  * <p>
  * Contribute instance of this interface into {@link ConfigHelperInitializer}:
  * <pre>
- * public void contributeConfigHelperInitializer(OrderedConfiguration<ConfigHelperValidator> configuration)
+ * public void contributeConfigHelperInitializer(OrderedConfiguration&lt;ConfigHelperValidator&gt; configuration)
  * {
  *     configuration.addInstance("CustomConfigValidator", CustomConfigValidator.class);
  * }
