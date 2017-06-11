@@ -138,7 +138,6 @@ public class ConfigHelper
      * Creates an instance of {@link ConfigHelper} and from given {@link Properties}.
      *
      * @param properties Properties to use for this {@link ConfigHelper}.
-     * @return New instance of {@link ConfigHelper} with given <code>properties</code>.
      */
     public ConfigHelper(Properties properties)
     {
