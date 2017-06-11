@@ -27,8 +27,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -44,12 +46,17 @@ public class ConfigHelper
 
     private Properties properties;
 
-    private final Set<String> referenced = new HashSet<String>();
+    private final Set<String> referenced;
+    private final Map<String, Class<?>> propertyTypes;
 
     /**
      * Creates an instance of {@link ConfigHelper} and load properties from resource on classpath.
      *
+     * @param resourceName Path to classpath resource with properties.
+     * @return New instance of {@link ConfigHelper} with values loaded from given <code>resourceName</code>.
+     * @throws IOException on resource read errors.
      * @see ClassLoader#getResourceAsStream(String)
+     * @see Properties
      */
     public static ConfigHelper fromClasspathResource(String resourceName) throws IOException
     {
@@ -64,6 +71,12 @@ public class ConfigHelper
 
     /**
      * Creates an instance of {@link ConfigHelper} and load properties from file with filename specified by system property.
+     *
+     * @param property Name of a system property that holds path of a file with properties.
+     * @return New instance of {@link ConfigHelper} with values loaded from a file.
+     * @throws IOException on file read errors.
+     * @see Properties
+     * @see System#getProperty(String)
      */
     public static ConfigHelper fromSystemProperty(String property) throws IOException
     {
@@ -74,6 +87,11 @@ public class ConfigHelper
 
     /**
      * Creates an instance of {@link ConfigHelper} and load properties from file with given name.
+     *
+     * @param file Name of file with properties.
+     * @return New instance of {@link ConfigHelper} with properties loaded from <code>file</code>.
+     * @throws IOException on <code>file</code> read errors.
+     * @see Properties
      */
     public static ConfigHelper fromFile(String file) throws IOException
     {
@@ -82,6 +100,11 @@ public class ConfigHelper
 
     /**
      * Creates an instance of {@link ConfigHelper} and load properties from given {@link File}.
+     *
+     * @param file File with properties.
+     * @return New instance of {@link ConfigHelper} with properties loaded from given <code>file</code>.
+     * @throws IOException on <code>file</code> read errors.
+     * @see Properties
      */
     public static ConfigHelper fromFile(File file) throws IOException
     {
@@ -90,6 +113,11 @@ public class ConfigHelper
 
     /**
      * Creates an instance of {@link ConfigHelper} and load properties from given {@link InputStream}.
+     *
+     * @param input Input stream with properties.
+     * @return New instance of {@link ConfigHelper} with properties loaded from given <code>input</code>.
+     * @throws IOException on <code>input</code> read errors.
+     * @see Properties
      */
     public static ConfigHelper fromStream(InputStream input) throws IOException
     {
@@ -102,6 +130,23 @@ public class ConfigHelper
     public ConfigHelper()
     {
         this.properties = new Properties();
+        this.referenced = new HashSet<>();
+        this.propertyTypes = new HashMap<>();
+    }
+
+    /**
+     * Creates an instance of {@link ConfigHelper} and from given {@link Properties}.
+     *
+     * @param properties Properties to use for this {@link ConfigHelper}.
+     * @return New instance of {@link ConfigHelper} with given <code>properties</code>.
+     */
+    public ConfigHelper(Properties properties)
+    {
+        this.properties = new Properties();
+        this.properties.putAll(properties);
+
+        this.referenced = new HashSet<>(properties.size());
+        this.propertyTypes = new HashMap<>(properties.size());
     }
 
     /**
@@ -109,6 +154,9 @@ public class ConfigHelper
      * <p>
      * {@link ConfigHelper}s from given <code>configuration</code> will be copied into new instance
      * using <code>this.{@link #copyFrom(ConfigHelper)}</code>.
+     *
+     * @param configuration List of source {@link ConfigHelper}s to copy properties from.
+     *                      The value is usually created by the Tapestry IoC.
      */
     public ConfigHelper(List<ConfigHelper> configuration)
     {
@@ -130,12 +178,16 @@ public class ConfigHelper
         logger.info("Reading config from file: {}", configFile.getAbsoluteFile());
         this.configFile = configFile;
         readProperties(configFile);
+        referenced = new HashSet<>(properties.size());
+        propertyTypes = new HashMap<>(properties.size());
     }
 
     private ConfigHelper(InputStream input, String resourceName) throws IOException
     {
         this.resourceName = resourceName;
         readProperties(input);
+        referenced = new HashSet<>(properties.size());
+        propertyTypes = new HashMap<>(properties.size());
     }
 
     protected void readProperties(File configFile) throws IOException
@@ -220,67 +272,151 @@ public class ConfigHelper
     }
 
     /**
+     * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>.
+     *
+     * @param propertyName  Name of the property.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
+     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
+     * @see MappedConfiguration#add(Object, Object)
+     */
+    public void add(String propertyName, MappedConfiguration<String, Object> configuration) throws IllegalStateException
+    {
+        add(Object.class, propertyName, configuration);
+    }
+
+    /**
+     * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>.
+     * <p>
+     * {@link PropertyTypeValidator} will validate value of the property (after symbol expansion)
+     * to be coercible to <code>propertyType</code>.
+     *
+     * @param propertyName  Name of the property.
+     * @param propertyType  Desired type of the property after symbol expansion.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
+     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
+     * @see MappedConfiguration#add(Object, Object)
+     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     */
+    public void add(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
+            throws IllegalStateException
+    {
+        assertNotNull(propertyType);
+        assertPropertyDefined(propertyName, properties);
+
+        configuration.add(propertyName, properties.get(propertyName));
+        propertyTypes.put(propertyName, propertyType);
+        referenced.add(propertyName);
+    }
+
+    /**
      * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>
      * only if it exists in this {@link ConfigHelper}.
      *
+     * @param propertyName  Name of the property.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
      * @see MappedConfiguration#add(Object, Object)
      */
     public void addIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
+        addIfExists(Object.class, propertyName, configuration);
+    }
+
+    /**
+     * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>
+     * only if it exists in this {@link ConfigHelper}.
+     * <p>
+     * {@link PropertyTypeValidator} will validate value of the property (after symbol expansion)
+     * to be coercible to <code>propertyType</code>.
+     *
+     * @param propertyName  Name of the property.
+     * @param propertyType  Desired type of the property after symbol expansion.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
+     * @see MappedConfiguration#add(Object, Object)
+     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     */
+    public void addIfExists(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
+    {
         if (properties.containsKey(propertyName))
         {
-            configuration.add(propertyName, properties.get(propertyName));
-            referenced.add(propertyName);
+            add(propertyType, propertyName, configuration);
         }
+    }
+
+    /**
+     * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>.
+     *
+     * @param propertyName  Name of the property.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
+     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
+     * @see MappedConfiguration#override(Object, Object)
+     */
+    public void override(String propertyName, MappedConfiguration<String, Object> configuration) throws IllegalStateException
+    {
+        override(Object.class, propertyName, configuration);
+    }
+
+    /**
+     * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>.
+     * <p>
+     * {@link PropertyTypeValidator} will validate value of the property (after symbol expansion)
+     * to be coercible to <code>propertyType</code>.
+     *
+     * @param propertyName  Name of the property.
+     * @param propertyType  Desired type of the property after symbol expansion.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
+     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
+     * @see MappedConfiguration#override(Object, Object)
+     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     */
+    public void override(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
+            throws IllegalStateException
+    {
+        assertNotNull(propertyType);
+        assertPropertyDefined(propertyName, properties);
+
+        configuration.override(propertyName, properties.get(propertyName));
+        propertyTypes.put(propertyName, propertyType);
+        referenced.add(propertyName);
     }
 
     /**
      * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>
      * only if it exists in this {@link ConfigHelper}.
      *
+     * @param propertyName  Name of the property.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
      * @see MappedConfiguration#override(Object, Object)
      */
     public void overrideIfExists(String propertyName, MappedConfiguration<String, Object> configuration)
     {
+        overrideIfExists(Object.class, propertyName, configuration);
+    }
+
+    /**
+     * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>
+     * only if it exists in this {@link ConfigHelper}.
+     * <p>
+     * {@link PropertyTypeValidator} will validate value of the property (after symbol expansion)
+     * to be coercible to <code>propertyType</code>.
+     *
+     * @param propertyName  Name of the property.
+     * @param propertyType  Desired type of the property after symbol expansion.
+     * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
+     * @see MappedConfiguration#override(Object, Object)
+     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     */
+    public void overrideIfExists(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
+    {
         if (properties.containsKey(propertyName))
         {
-            configuration.override(propertyName, properties.get(propertyName));
-            referenced.add(propertyName);
+            override(propertyType, propertyName, configuration);
         }
-    }
-
-    /**
-     * Adds property with name <code>propertyName</code> and value from this {@link ConfigHelper} into given <code>configuration</code>.
-     *
-     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
-     * @see MappedConfiguration#add(Object, Object)
-     */
-    public void add(String propertyName, MappedConfiguration<String, Object> configuration) throws IllegalStateException
-    {
-        assertPropertyDefined(propertyName, properties);
-
-        configuration.add(propertyName, properties.get(propertyName));
-        referenced.add(propertyName);
-    }
-
-    /**
-     * Overrides property with name <code>propertyName</code> and value from this {@link ConfigHelper} in given <code>configuration</code>.
-     *
-     * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
-     * @see MappedConfiguration#override(Object, Object)
-     */
-    public void override(String propertyName, MappedConfiguration<String, Object> configuration) throws IllegalStateException
-    {
-        assertPropertyDefined(propertyName, properties);
-
-        configuration.override(propertyName, properties.get(propertyName));
-        referenced.add(propertyName);
     }
 
     /**
      * @return Names of all properties from this {@link ConfigHelper}.
      */
-    public Set<String> names()
+    public Set<String> getPropertyNames()
     {
         Set<String> names = new HashSet<String>();
         for (Object key : properties.keySet())
@@ -291,14 +427,8 @@ public class ConfigHelper
     }
 
     /**
-     * @return Names of all properties from this {@link ConfigHelper} that were referenced using one of the following methods:
-     * <ul>
-     * <li>{@link #add(String, MappedConfiguration)}</li>
-     * <li>{@link #addIfExists(String, MappedConfiguration)}</li>
-     * <li>{@link #override(String, MappedConfiguration)}</li>
-     * <li>{@link #overrideIfExists(String, MappedConfiguration)}</li>
-     * <li>{@link #get(String)}</li>
-     * </ul>
+     * @return Names of all properties from this {@link ConfigHelper} that were referenced using one of the <code>add...</code>,
+     * <code>override...</code>, or {@link #getRaw(String)} methods.
      * <p>
      * All properties not referenced using one of the above methods will be considered unused and will be reported
      * by the {@link UnreferencedPropertiesValidator}.
@@ -309,9 +439,22 @@ public class ConfigHelper
     }
 
     /**
+     * @param propertyName Name of the property.
+     * @return Desired type of the given <code>propertyName</code> as specified by {@link #add(Class, String, MappedConfiguration)}
+     * or {@link #override(Class, String, MappedConfiguration)}.
+     * If not explicitly specified default type is {@link Object}.
+     * Returns <code>null</code> if <code>propertyName</code> is not known to this {@link ConfigHelper}.
+     */
+    public Class<?> getPropertyType(String propertyName)
+    {
+        return propertyTypes.get(propertyName);
+    }
+
+    /**
+     * @param propertyName Name of the property.
      * @return Raw property value by its name or <code>null</code> if property doesn't exist.
      */
-    public String get(String propertyName)
+    public String getRaw(String propertyName)
     {
         referenced.add(propertyName);
 
@@ -320,23 +463,33 @@ public class ConfigHelper
 
     /**
      * Copy properties from given {@link ConfigHelper} into this instance.
+     *
+     * @param source Source {@link ConfigHelper} to read properties from.
      */
     public void copyFrom(ConfigHelper source)
     {
-        for (String name : source.names())
+        for (String name : source.getPropertyNames())
         {
-            properties.put(name, source.get(name));
+            properties.put(name, source.getRaw(name));
         }
     }
 
     private void extendFrom(ConfigHelper source)
     {
-        for (String name : source.names())
+        for (String name : source.getPropertyNames())
         {
             if (!properties.containsKey(name))
             {
-                properties.put(name, source.get(name));
+                properties.put(name, source.getRaw(name));
             }
+        }
+    }
+
+    private static void assertNotNull(Object object)
+    {
+        if (object == null)
+        {
+            throw new NullPointerException();
         }
     }
 

@@ -36,7 +36,7 @@ public class UnreferencedPropertiesValidator implements ConfigHelperValidator
     @Override
     public void validate(ConfigHelper configHelper)
     {
-        Set<String> names = configHelper.names();
+        Set<String> names = configHelper.getPropertyNames();
 
         names.removeAll(configHelper.getReferenced());
 

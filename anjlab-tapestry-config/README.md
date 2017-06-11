@@ -1,30 +1,27 @@
 Configuration helpers for Tapestry5
 ===================================
 
-`ConfigHelper` is a helper class built for Tapestry IoC's [`MappedConfiguration`](http://tapestry.apache.org/tapestry-ioc-configuration.html).
+`ConfigHelper` is a helper class and a Tapestry-IoC-service built around [`MappedConfiguration`](http://tapestry.apache.org/tapestry-ioc-configuration.html).
 
-`ConfigHelper` can read data from a properties file on disk or classpath.
+The purpose of `ConfigHelper` is to validate application properties early on application initialization and fail application start before it starts serving user requests if configuration was not valid.
 
-
-The purpose of ConfigHelper is to fail application start if required property not found in the properties file, or if the configuration isn't valid (read about validation below).
+`ConfigHelper` uses format of `java.util.Properties` to define application properties.
 
 ### Usage
 
-1. Define source of the properties by contributing instance of `ConfigHelper` class to the `ConfigHelper` service:
+1. Define source of the properties by contributing instance of `ConfigHelper` class to the `ConfigHelper` Tapestry-IoC-service:
 
     ```java
     @Contribute(ConfigHelper.class)
     public void contributeConfigHelper(OrderedConfiguration<ConfigHelper> configuration) throws IOException
     {
-        configuration.add("Config", ConfigHelper.fromClasspathResource("config.properties"));
+        configuration.add("MyConfig", ConfigHelper.fromClasspathResource("my-config.properties"));
     }
     ```
 
-   This may look like a chicken-egg problem where in order to configure the service you
-    first create an instance of service's class.
+   `ConfigHelper` as-a-Tapestry-IoC-service takes instances of `ConfigHelper` as-plain-old-java-objects to configure itself. There are number of ways you can create instances of `ConfigHelper` objects, i.e. from `File`, from classpath resource, or simply from `Properties` object.
 
-    You can contribute as many `ConfigHelper`s as you like, they will extend each other
-     in specified order by overwriting repeated properties.
+    You can contribute as many `ConfigHelper`s to service configuration as you like, they will extend each other in specified order by overwriting repeated properties.
 
 2. Contribute application symbols using `ConfigHelper`:
 
@@ -36,16 +33,23 @@ The purpose of ConfigHelper is to fail application start if required property no
        ConfigHelper configHelper = objectLocator.getService(ConfigHelper.class);
 
        configHelper.add("property1", configuration);
-       configHelper.addIfExists("property2", configuration);
-       configHelper.override("property3", configuration);
-       configHelper.overrideIfExists("property4", configuration);
+       configHelper.add(Integer.class, "property2", configuration);
+       configHelper.addIfExists("property3", configuration);
+       configHelper.addIfExists(Boolean.class, "property4", configuration);
+
+       configHelper.override("property5", configuration);
+       configHelper.override(Date.class, "property6", configuration);
+       configHelper.overrideIfExists("property7", configuration);
+       configHelper.overrideIfExists(Money.class, "property8", configuration);
     }
     ```
     
-    `.add` and `.override` methods will fail if no property was found in `ConfigHelper`.
+    `.add...` and `.override...` methods will fail if no property was found in `ConfigHelper`.
     
-    You can also use `ConfigHelper.names()` to get names of all available properties,
-    and `ConfigHelper.get(String propertyName)` to get raw value of a property.
+    Note there are overloads of `.add...` and `.override...` methods that accept property type as first argument. This type will be used by the `PropertyTypeValidator` to check that property value (after symbol expansion) can be coerced to desired type. Validator will use Tapestry's `TypeCoercer`, you will need to implement and contribute a custom `TypeCoercer` for your custom types.
+    
+    You can also use `ConfigHelper.getPropertyNames()` to get names of all available properties,
+    and `ConfigHelper.getRaw(String propertyName)` to get raw value of a property (before symbol expansion).
 
 #### Referencing properties files from each other
 
@@ -84,7 +88,9 @@ In this case *extending-config.properties* will be loaded first, and its only de
 `ConfigHelperModule` registers itself as Tapestry5 `ApplicationInitializerFilter`
 that runs `ConfigHelperValidator`s before application started serving requests.
 
-There's just one built-in validator named `"UnreferencedProperties"` that reports properties that were not referenced during application configuration.
+Built-in validators:
+ - `"UnreferencedProperties"` reports properties that were not referenced during application configuration;
+ - `"PropertyType"` validates types of property values after symbol expansion using `TypeCoercer`.
 
 To add your own validator create a class that extends `ConfigHelperValidator` and contribute it to `ConfigHelperInitializer`:
 
@@ -92,19 +98,19 @@ To add your own validator create a class that extends `ConfigHelperValidator` an
 public void contributeConfigHelperInitializer(
             OrderedConfiguration<ConfigHelperValidator> configuration)
 {
-    configuration.addInstance("CustomConfigValidator", CustomConfigValidator.class);
+    configuration.addInstance("MyConfigValidator", MyConfigValidator.class);
 }
 ```
 
 #### Changing order of `ConfigHelperInitializer`
 
-It may be necessary to change the order of config validation, i.e. if you need to read values from database, but you want to apply Liquibase migrations first.
+It may be necessary to change the order of config validation, i.e. if you need to read some values from a database, but only after Liquibase change sets were applied.
 
 If you're using `anjlab-tapestry-liquibase` the following configuration should do it:
 ```java
 public void contributeApplicationInitializer(
         OrderedConfiguration<ApplicationInitializerFilter> configuration,
-        @Inject @Symbol(LIQUIBASE_SHOULD_RUN) boolean shouldRunLiquibase,
+        @Inject @Symbol(LiquibaseModule.LIQUIBASE_SHOULD_RUN) boolean shouldRunLiquibase,
         ConfigHelperInitializer configHelperInitializer)
 {
     if (shouldRunLiquibase)
