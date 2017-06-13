@@ -1,5 +1,7 @@
-package com.anjlab.tapestry5.config.services;
+package com.anjlab.tapestry5.config;
 
+import com.anjlab.tapestry5.config.ConfigHelper;
+import com.anjlab.tapestry5.config.PropertyTypeValidator;
 import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.ioc.services.TypeCoercer;

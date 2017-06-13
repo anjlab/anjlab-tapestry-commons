@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.anjlab.tapestry5.config.services;
+package com.anjlab.tapestry5.config;
 
+import com.anjlab.tapestry5.config.ConfigHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -15,11 +15,6 @@
  */
 package com.anjlab.tapestry5.config;
 
-import com.anjlab.tapestry5.config.services.ConfigHelper;
-import com.anjlab.tapestry5.config.services.ConfigHelperInitializer;
-import com.anjlab.tapestry5.config.services.ConfigHelperValidator;
-import com.anjlab.tapestry5.config.services.PropertyTypeValidator;
-import com.anjlab.tapestry5.config.services.UnreferencedPropertiesValidator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.services.ApplicationInitializerFilter;

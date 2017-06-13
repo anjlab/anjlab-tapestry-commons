@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.anjlab.tapestry5.config.services;
+package com.anjlab.tapestry5.config;
 
 /**
  * Logic for validation of {@link ConfigHelper} instance.
