@@ -18,6 +18,7 @@ package com.anjlab.tapestry5.config;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,6 +158,7 @@ public class ConfigHelper
      * @param configuration List of source {@link ConfigHelper}s to copy properties from.
      *                      The value is usually created by the Tapestry IoC.
      */
+    @Inject
     public ConfigHelper(List<ConfigHelper> configuration)
     {
         this();
