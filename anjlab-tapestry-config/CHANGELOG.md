@@ -1,3 +1,7 @@
+1.0.1
+=====
+ - Fixed a bug when Tapestry IoC could pick wrong constructor for service creation.
+
 1.0.0
 =====
 
