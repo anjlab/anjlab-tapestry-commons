@@ -29,11 +29,11 @@ and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-re
 <dependency>
     <groupId>com.anjlab.tapestry5</groupId>
     <artifactId>anjlab-tapestry-commons</artifactId>
-    <version>1.2.3</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
 #### Gradle
 ```groovy
-compile 'com.anjlab.tapestry5:anjlab-tapestry-commons:1.2.3'
+compile 'com.anjlab.tapestry5:anjlab-tapestry-commons:2.0.0'
 ```

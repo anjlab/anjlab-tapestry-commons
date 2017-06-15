@@ -124,11 +124,11 @@ and [this repository](https://github.com/anjlab/anjlab-tapestry-commons#maven-re
 <dependency>
     <groupId>com.anjlab.tapestry5</groupId>
     <artifactId>anjlab-tapestry-liquibase</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.2</version>
 </dependency>
 ```
 
 #### Gradle
 ```groovy
-compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.3.1'
+compile 'com.anjlab.tapestry5:anjlab-tapestry-liquibase:1.3.2'
 ```
