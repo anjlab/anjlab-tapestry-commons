@@ -1,0 +1,26 @@
+version = '1.0.1'
+description = 'Configuration helpers for Tapestry5'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+bintray.pkg.name = name
+bintray.pkg.desc = description
+bintray.pkg.labels = []
+
+dependencies {
+    compile "commons-io:commons-io:2.4"
+
+    compileOnly "org.apache.tapestry:tapestry-core:${project.tapestry_version}"
+    compileOnly 'ch.qos.logback:logback-core:1.0.13'
+    compileOnly 'ch.qos.logback:logback-classic:1.0.13'
+
+    testCompile "org.mockito:mockito-all:1.9.5"
+    testCompile "org.apache.tapestry:tapestry-core:${project.tapestry_version}"
+}
+
+jar {
+    manifest {
+        attributes("Tapestry-Module-Classes": "com.anjlab.tapestry5.config.ConfigHelperModule")
+    }
+}

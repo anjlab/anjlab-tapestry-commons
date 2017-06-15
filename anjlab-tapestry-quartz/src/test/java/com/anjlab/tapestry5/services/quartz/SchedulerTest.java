@@ -15,17 +15,12 @@
  */
 package com.anjlab.tapestry5.services.quartz;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import junit.framework.Assert;
-
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.services.TapestryModule;
+import org.apache.tapestry5.modules.TapestryModule;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.JobBuilder;
@@ -34,6 +29,10 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class SchedulerTest
 {

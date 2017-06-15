@@ -1,3 +1,6 @@
-include 'anjlab-tapestry-commons', 'anjlab-tapestry-quartz', 'anjlab-tapestry-liquibase'
+include 'anjlab-tapestry-commons',
+        'anjlab-tapestry-config',
+        'anjlab-tapestry-quartz',
+        'anjlab-tapestry-liquibase'
 
 rootProject.name = 'anjlab-tapestry-commons-parent'

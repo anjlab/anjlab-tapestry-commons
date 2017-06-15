@@ -12,9 +12,10 @@ project.ext.hibernate_version="5.0.0.CR3"
 
 dependencies {
     compile 'org.liquibase:liquibase-core:3.1.0'
-    provided 'javax.servlet:javax.servlet-api:3.1.0'
-    provided "org.apache.tapestry:tapestry-jpa:${project.tapestry_version}"
-    provided "org.hibernate:hibernate-core:${hibernate_version}"
+
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
+    compileOnly "org.apache.tapestry:tapestry-jpa:${project.tapestry_version}"
+    compileOnly "org.hibernate:hibernate-core:${hibernate_version}"
 }
 
 jar {
