@@ -1,3 +1,7 @@
+1.1.0
+=====
+ - Changed default encoding of properties files to UTF-8
+
 1.0.1
 =====
  - Fixed a bug when Tapestry IoC could pick wrong constructor for service creation.
