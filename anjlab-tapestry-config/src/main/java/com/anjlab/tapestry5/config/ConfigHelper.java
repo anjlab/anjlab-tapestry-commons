@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -224,7 +225,7 @@ public class ConfigHelper
     protected void readProperties(InputStream input) throws IOException
     {
         properties = new Properties();
-        properties.load(input);
+        properties.load(new InputStreamReader(input, StandardCharsets.UTF_8));
 
         List<ConfigHelper> extensions = new ArrayList<ConfigHelper>();
 
