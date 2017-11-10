@@ -42,6 +42,7 @@ public class ConfigHelper
     private static final Logger logger = LoggerFactory.getLogger(ConfigHelper.class);
 
     public static final String EXTEND = "extend";
+    public static final String PREFIX = "prefix";
 
     private File configFile;
 
@@ -193,7 +194,7 @@ public class ConfigHelper
         propertyTypes = new HashMap<>(properties.size());
     }
 
-    protected void readProperties(File configFile) throws IOException
+    private void readProperties(File configFile) throws IOException
     {
         if (!configFile.exists())
         {
@@ -223,16 +224,18 @@ public class ConfigHelper
         }
     }
 
-    protected void readProperties(InputStream input) throws IOException
+    private void readProperties(InputStream input) throws IOException
     {
         properties = new Properties();
         properties.load(new InputStreamReader(input, StandardCharsets.UTF_8));
 
-        List<ConfigHelper> extensions = new ArrayList<ConfigHelper>();
+        List<ConfigHelper> extensions = new ArrayList<>();
 
         if (properties.containsKey(EXTEND))
         {
-            extensions.add(fromExtend(properties.getProperty(EXTEND)));
+            extensions.add(
+                    fromExtend(properties.getProperty(EXTEND))
+                            .renameKeys(properties.getProperty(EXTEND + "." + PREFIX)));
         }
 
         //  Support multiple ordered extensions
@@ -244,7 +247,9 @@ public class ConfigHelper
 
             if (properties.containsKey(key))
             {
-                extensions.add(fromExtend(properties.getProperty(key)));
+                extensions.add(
+                        fromExtend(properties.getProperty(key))
+                            .renameKeys(properties.getProperty(key + "." + PREFIX)));
             }
             else
             {
@@ -254,6 +259,21 @@ public class ConfigHelper
         }
 
         extendFrom(new ConfigHelper(extensions));
+    }
+
+    private ConfigHelper renameKeys(String prefix)
+    {
+        if (prefix == null || prefix.trim().length() == 0)
+        {
+            return this;
+        }
+
+        for (String name : getPropertyNames())
+        {
+            properties.put(prefix + name, properties.remove(name));
+        }
+
+        return this;
     }
 
     private ConfigHelper fromExtend(String relativePath) throws IOException

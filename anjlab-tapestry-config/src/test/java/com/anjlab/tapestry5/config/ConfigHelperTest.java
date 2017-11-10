@@ -56,6 +56,14 @@ public class ConfigHelperTest
     }
 
     @Test
+    public void testClasspathConfigExtendFromWithPrefix() throws IOException
+    {
+        ConfigHelper helper = ConfigHelper.fromClasspathResource("extend-with-prefix.properties");
+        Assert.assertEquals("Overridden Property 1", helper.getRaw("namespace.prop1"));
+        Assert.assertEquals("Base Property 2", helper.getRaw("namespace.prop2"));
+    }
+
+    @Test
     public void testMultiExtension() throws IOException
     {
         ConfigHelper helper = ConfigHelper.fromClasspathResource("multi-extending-config.properties");

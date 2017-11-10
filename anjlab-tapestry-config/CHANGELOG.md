@@ -1,3 +1,7 @@
+1.1.1
+=====
+ - Added support for optional prefix for property names when extending configs.
+
 1.1.0
 =====
  - Changed default encoding of properties files to UTF-8
