@@ -44,6 +44,7 @@ public class QuartzModule
 {
     public static final String QUARTZ_PROPERTIES = "quartz.properties";
     public static final String WAIT_FOR_JOBS_TO_COMPLETE = "org.quartz.scheduler.waitForJobsToComplete";
+    public static final String START_SCHEDULERS = "org.quartz.scheduler.start";
 
     public static void bind(ServiceBinder binder)
     {
@@ -53,6 +54,7 @@ public class QuartzModule
     public static void contributeFactoryDefaults(MappedConfiguration<String, Object> configuration)
     {
         configuration.add(WAIT_FOR_JOBS_TO_COMPLETE, "false");
+        configuration.add(START_SCHEDULERS, "true");
     }
     
     public static void contributeSchedulerFactory(MappedConfiguration<String, Object> configuration)
@@ -120,7 +122,9 @@ public class QuartzModule
                         final PerthreadManager perthreadManager,
                         RegistryShutdownHub shutdownHub,
                         @Inject @Symbol(WAIT_FOR_JOBS_TO_COMPLETE)
-                        final boolean waitForJobsToComplete) throws SchedulerException
+                        final boolean waitForJobsToComplete,
+                        @Inject @Symbol(START_SCHEDULERS)
+                        final boolean startSchedulers) throws SchedulerException
     {
         final JobListenerSupport cleanupThread = new JobListenerSupport()
         {
@@ -148,8 +152,11 @@ public class QuartzModule
             if (!scheduler.isStarted())
             {
                 scheduler.getListenerManager().addJobListener(cleanupThread);
-                
-                scheduler.start();
+
+                if (startSchedulers)
+                {
+                    scheduler.start();
+                }
             }
         }
         
