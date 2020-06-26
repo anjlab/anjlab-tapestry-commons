@@ -72,6 +72,8 @@ prop1=Overridden Property 1
 
 Creating `ConfigHelper` from *extending-config.properties* will automatically load *base-config.properties*. Resulting `ConfigHelper` will have property `prop1` with value `Overridden Property 1`.
 
+##### Extending multiple files
+
 It's also possible to extend from more than one file, in this case you need to specify the order explicitly: 
 
 *multi-extending-config.properties*
@@ -82,6 +84,28 @@ extend.2=base-config.properties
 
 In this case *extending-config.properties* will be loaded first, and its only defined property `prop1` will then be overwritten with value from `base-config.properties`.
 
+##### Loading property names with custom prefix/namespace
+
+You can specify optional prefix for property names when extending configs using special property name --
+`extend.prefix` (or `extend.N.prefix` for ordered extensions), i.e.:
+
+*extend-with-prefix.properties*
+```
+extend=base-config.properties
+extend.prefix=namespace.
+
+prop1=Preventing name clashes
+
+namespace.prop1=Overridden Property 1
+```
+
+Resulting `ConfigHelper` will contain the following properties:
+
+```
+prop1=Preventing name clashes
+namespace.prop1=Overridden Property 1
+namespace.prop2=Base Property 2
+```
 
 #### Validating configuration properties
 
