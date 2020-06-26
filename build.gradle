@@ -1,5 +1,5 @@
 plugins {
-    id "com.jfrog.bintray" version "1.7.3"
+    id "com.jfrog.bintray" version "1.8.4"
     id "com.github.hierynomus.license" version "0.14.0"
 }
 
@@ -69,12 +69,12 @@ subprojects {
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         from sourceSets.main.allSource
-        classifier = 'sources'
+        archiveClassifier.set('sources')
     }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         from javadoc.destinationDir
-        classifier = 'javadoc'
+        archiveClassifier.set('javadoc')
     }
 
     jar.dependsOn sourcesJar
@@ -101,9 +101,6 @@ subprojects {
                 from components.java
                 artifact sourcesJar
                 artifact javadocJar
-                groupId project.group
-                artifactId project.name
-                version project.version
 
                 pom.withXml {
                     def root = asNode()
