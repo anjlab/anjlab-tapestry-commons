@@ -23,16 +23,15 @@ import org.apache.tapestry5.ioc.services.SymbolSource;
 import org.apache.tapestry5.modules.TapestryModule;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
+import org.quartz.*;
 
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static org.quartz.DateBuilder.futureDate;
+
 
 public class SchedulerTest
 {
@@ -63,7 +62,7 @@ public class SchedulerTest
         Trigger trigger = TriggerBuilder.newTrigger().startNow().build();
         
         QuartzJobFuture<String> future =
-                new QuartzJobFuture<String>(scheduler, job.getKey());
+                new QuartzJobFuture<>(scheduler, job.getKey());
         
         scheduler.scheduleJob(job, trigger);
         
@@ -72,6 +71,41 @@ public class SchedulerTest
         String appVersion = registry.getService(SymbolSource.class)
                 .valueForSymbol(SymbolConstants.APPLICATION_VERSION);
         
+        Assert.assertEquals("username = John Smith, app version = " + appVersion, result);
+    }
+
+
+    @Test
+    public void testQuartzFutureMatchByExecutionId()
+            throws SchedulerException, InterruptedException,
+            ExecutionException, TimeoutException
+    {
+        Scheduler scheduler = registry.getService(Scheduler.class);
+
+        JobDetail job = JobBuilder.newJob(HelloJob.class).withIdentity("job1","group1").build();
+        Trigger trigger = TriggerBuilder
+                .newTrigger()
+                .startAt(futureDate(10, DateBuilder.IntervalUnit.MINUTE))
+                .startNow()
+                .build();
+        scheduler.scheduleJob(job, trigger);
+
+        JobDataMap jobDataMap = new JobDataMap();
+        final String executionId = UUID.randomUUID().toString();
+        jobDataMap.put("executionId", executionId);
+        jobDataMap.put("username", "John Smith");
+
+
+        QuartzJobFuture<String> future =
+                new QuartzJobFuture<>(scheduler, job.getKey(), "executionId", executionId);
+
+        scheduler.triggerJob(job.getKey(), jobDataMap);
+
+        String result = future.get(5, TimeUnit.SECONDS);
+
+        String appVersion = registry.getService(SymbolSource.class)
+                .valueForSymbol(SymbolConstants.APPLICATION_VERSION);
+
         Assert.assertEquals("username = John Smith, app version = " + appVersion, result);
     }
 }
