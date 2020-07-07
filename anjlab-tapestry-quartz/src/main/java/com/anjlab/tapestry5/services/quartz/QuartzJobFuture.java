@@ -1,12 +1,12 @@
 /**
  * Copyright 2014 AnjLab
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,26 +40,18 @@ import java.util.concurrent.TimeoutException;
 public class QuartzJobFuture<T> implements Future<T>, JobListener
 {
     private static final Logger logger = LoggerFactory.getLogger(QuartzJobFuture.class);
-    private final ExecutionMatcher executionMatcher;
 
     private boolean vetoed;
     private boolean executed;
-
     private boolean cancelled;
-
     private Object result;
 
+    private final ExecutionMatcher executionMatcher;
     private final Scheduler scheduler;
     private final JobKey jobKey;
-
     private final Object monitor = new Object();
     private final String listenerId = UUID.randomUUID().toString();
-
     private final Set<String> matchedExecutionIds = new HashSet<>();
-
-    public interface ExecutionMatcher{
-        boolean matched(JobExecutionContext context);
-    }
 
     public QuartzJobFuture(Scheduler scheduler, JobKey jobKey) throws SchedulerException
     {
@@ -97,7 +89,7 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
     @Override
     public void jobToBeExecuted(JobExecutionContext context)
     {
-        if(executionMatcher.matched(context))
+        if (executionMatcher.matched(context))
         {
             this.matchedExecutionIds.add(context.getFireInstanceId());
         }
@@ -106,7 +98,7 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
     @Override
     public void jobExecutionVetoed(JobExecutionContext context)
     {
-        if(!executionMatcher.matched(context))
+        if (!executionMatcher.matched(context))
         {
             return;
         }
@@ -137,7 +129,7 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
     @Override
     public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException)
     {
-        if(!executionMatcher.matched(context))
+        if (!executionMatcher.matched(context))
         {
             return;
         }
@@ -168,7 +160,7 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
 
         try
         {
-            for(String executionId : matchedExecutionIds)
+            for (String executionId : matchedExecutionIds)
             {
                 scheduler.interrupt(executionId);
             }
@@ -267,32 +259,5 @@ public class QuartzJobFuture<T> implements Future<T>, JobListener
             }
         }
         return (T) result;
-    }
-
-    public static class AnyExecutionMatcher implements ExecutionMatcher
-    {
-        @Override
-        public boolean matched(JobExecutionContext context)
-        {
-            return true;
-        }
-    }
-
-    public static class KeyValueExecutionMatcher implements ExecutionMatcher
-    {
-        private final String keyName;
-        private final String value;
-
-        public KeyValueExecutionMatcher(String keyName, String value)
-        {
-            this.keyName = keyName;
-            this.value = value;
-        }
-
-        @Override
-        public boolean matched(JobExecutionContext context)
-        {
-             return value.equals(context.getTrigger().getJobDataMap().get(keyName));
-        }
     }
 }
