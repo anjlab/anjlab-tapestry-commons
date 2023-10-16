@@ -1,34 +1,8 @@
 See sub-folders for documentation.
 
-## Maven repository
-
-#### Use with Maven
-``` xml
-<repositories>
-   ...
-   <repository>
-      <id>bintray-jcenter</id>
-      <url>http://jcenter.bintray.com</url>
-      <snapshots>
-         <enabled>false</enabled>
-      </snapshots>
-   </repository>
-   ...
-</repositories>
-```
-
-#### Or with Gradle
-```groovy
-   repositories {
-      ...
-      maven { url 'http://jcenter.bintray.com' }
-      ...
-   }
-```
-
 ## License
 
-Copyright 2013 AnjLab
+Copyright 2013-2023 AnjLab
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

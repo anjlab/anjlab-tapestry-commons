@@ -1,11 +1,10 @@
 plugins {
-    id "com.jfrog.bintray" version "1.8.4"
-    id "com.github.hierynomus.license" version "0.14.0"
+    id "com.github.hierynomus.license" version "0.16.1"
 }
 
 allprojects {
     apply plugin: 'license'
-    apply plugin: 'maven'
+    apply plugin: 'java-library'
     apply plugin: 'maven-publish'
 
     group = 'com.anjlab.tapestry5'
@@ -42,29 +41,14 @@ subprojects {
         def slf4j_version = '1.7.5'
         def logback_version = '1.0.13'
 
-        compile "org.slf4j:slf4j-api:${slf4j_version}"
-        runtime "org.slf4j:jcl-over-slf4j:${slf4j_version}"
-        runtime "org.slf4j:log4j-over-slf4j:${slf4j_version}"
+        api "org.slf4j:slf4j-api:${slf4j_version}"
+        implementation "org.slf4j:jcl-over-slf4j:${slf4j_version}"
+        implementation "org.slf4j:log4j-over-slf4j:${slf4j_version}"
 
-        runtime "ch.qos.logback:logback-core:${logback_version}"
-        runtime "ch.qos.logback:logback-classic:${logback_version}"
+        compileOnly "ch.qos.logback:logback-core:${logback_version}"
+        compileOnly "ch.qos.logback:logback-classic:${logback_version}"
 
-        testCompile 'junit:junit:4.8.2'
-    }
-
-    apply plugin: 'com.jfrog.bintray'
-
-    bintray {
-        user = "$bintray_user"
-        key = "$bintray_api_key"
-        publications = ['mavenJava']
-        pkg {
-            repo = 'maven'
-            userOrg = 'anjlab' // an optional organization name when the repo belongs to one of the user's orgs
-            licenses = ['Apache-2.0']
-            vcsUrl = 'https://github.com/anjlab/anjlab-tapestry-commons.git'
-        }
-        dryRun = false // whether to run this as dry-run, without deploying
+        testImplementation 'junit:junit:4.8.2'
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

@@ -1,26 +1,22 @@
-version = '1.0.4'
+version = '1.0.5-SNAPSHOT'
 description = 'Quartz for Tapestry5'
 
-bintray.pkg.name = name
-bintray.pkg.desc = description
-bintray.pkg.labels = []
-
 dependencies {
-    compile 'org.quartz-scheduler:quartz:2.2.0'
+    api 'org.quartz-scheduler:quartz:2.2.0'
 
     compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
     compileOnly "org.apache.tapestry:tapestry-core:${tapestry_version}"
 
-    testCompile "org.apache.tapestry:tapestry-core:${tapestry_version}"
-    testCompile "org.mockito:mockito-all:1.9.5"
-    testCompile ("org.apache.tapestry:tapestry-test:${project.tapestry_version}") {
-        exclude group: "org.apache.httpcomponents", module: "httpclient"
-        exclude group: "org.apache.httpcomponents", module: "httpcore"
+    testImplementation "org.apache.tapestry:tapestry-core:${tapestry_version}"
+    testImplementation 'org.mockito:mockito-all:1.9.5'
+    testImplementation ("org.apache.tapestry:tapestry-test:${tapestry_version}") {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        exclude group: 'org.apache.httpcomponents', module: 'httpcore'
     }
 }
 
 jar {
     manifest {
-        attributes("Tapestry-Module-Classes": "com.anjlab.tapestry5.services.quartz.QuartzModule")
+        attributes('Tapestry-Module-Classes': 'com.anjlab.tapestry5.services.quartz.QuartzModule')
     }
 }

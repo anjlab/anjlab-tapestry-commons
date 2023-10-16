@@ -15,7 +15,6 @@
  */
 package com.anjlab.tapestry5.services.quartz;
 
-import junit.framework.Assert;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
@@ -30,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import static org.junit.Assert.assertEquals;
 import static org.quartz.DateBuilder.futureDate;
 
 public class SchedulerTest
@@ -70,7 +70,7 @@ public class SchedulerTest
         String appVersion = registry.getService(SymbolSource.class)
                 .valueForSymbol(SymbolConstants.APPLICATION_VERSION);
 
-        Assert.assertEquals("username = John Smith, app version = " + appVersion, result);
+        assertEquals("username = John Smith, app version = " + appVersion, result);
     }
 
     @Test
@@ -84,7 +84,6 @@ public class SchedulerTest
         Trigger trigger = TriggerBuilder
                 .newTrigger()
                 .startAt(futureDate(10, DateBuilder.IntervalUnit.MINUTE))
-                .startNow()
                 .build();
         scheduler.scheduleJob(job, trigger);
 
@@ -103,6 +102,6 @@ public class SchedulerTest
         String appVersion = registry.getService(SymbolSource.class)
                 .valueForSymbol(SymbolConstants.APPLICATION_VERSION);
 
-        Assert.assertEquals("username = John Smith, app version = " + appVersion, result);
+        assertEquals("username = John Smith, app version = " + appVersion, result);
     }
 }
