@@ -17,7 +17,7 @@ package com.anjlab.tapestry5.config;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.AutoCloseInputStream;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -318,7 +318,7 @@ public class ConfigHelper
      * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
      * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
      * @see MappedConfiguration#add(Object, Object)
-     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     * @see org.apache.tapestry5.commons.services.TypeCoercer
      */
     public void add(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
             throws IllegalStateException
@@ -355,7 +355,7 @@ public class ConfigHelper
      * @param propertyType  Desired type of the property after symbol expansion.
      * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
      * @see MappedConfiguration#add(Object, Object)
-     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     * @see org.apache.tapestry5.commons.services.TypeCoercer
      */
     public void addIfExists(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
     {
@@ -389,7 +389,7 @@ public class ConfigHelper
      * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
      * @throws IllegalStateException if property with given name doesn't exist in this {@link ConfigHelper}.
      * @see MappedConfiguration#override(Object, Object)
-     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     * @see org.apache.tapestry5.commons.services.TypeCoercer
      */
     public void override(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
             throws IllegalStateException
@@ -426,7 +426,7 @@ public class ConfigHelper
      * @param propertyType  Desired type of the property after symbol expansion.
      * @param configuration Configuration of a {@link org.apache.tapestry5.ioc.services.SymbolProvider}.
      * @see MappedConfiguration#override(Object, Object)
-     * @see org.apache.tapestry5.ioc.services.TypeCoercer
+     * @see org.apache.tapestry5.commons.services.TypeCoercer
      */
     public void overrideIfExists(Class<?> propertyType, String propertyName, MappedConfiguration<String, Object> configuration)
     {

@@ -15,9 +15,9 @@
  */
 package com.anjlab.tapestry5.config;
 
-import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.commons.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
-import org.apache.tapestry5.services.ApplicationInitializerFilter;
+import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
 
 public class ConfigHelperModule
 {

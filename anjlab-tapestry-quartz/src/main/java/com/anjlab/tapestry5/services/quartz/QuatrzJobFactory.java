@@ -15,7 +15,7 @@
  */
 package com.anjlab.tapestry5.services.quartz;
 
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.quartz.Job;
 import org.quartz.JobDataMap;

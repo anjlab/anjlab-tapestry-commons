@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.tapestry5.ioc.MappedConfiguration;
-import org.apache.tapestry5.ioc.Resource;
+import org.apache.tapestry5.commons.MappedConfiguration;
+import org.apache.tapestry5.commons.Resource;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Startup;

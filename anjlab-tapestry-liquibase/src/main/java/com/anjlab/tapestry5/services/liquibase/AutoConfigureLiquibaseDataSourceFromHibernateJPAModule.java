@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.ioc.MethodAdviceReceiver;
 import org.apache.tapestry5.ioc.annotations.Advise;
 import org.apache.tapestry5.ioc.annotations.Inject;

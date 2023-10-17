@@ -16,7 +16,7 @@
 package com.anjlab.tapestry5.config;
 
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 
 /**
  * Validates types of property values after symbol expansion using {@link TypeCoercer}.

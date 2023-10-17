@@ -16,11 +16,11 @@
 package com.anjlab.tapestry5.config;
 
 import org.apache.tapestry5.TapestryFilter;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.ioc.annotations.UsesOrderedConfiguration;
-import org.apache.tapestry5.services.ApplicationInitializer;
-import org.apache.tapestry5.services.ApplicationInitializerFilter;
-import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.http.services.ApplicationInitializer;
+import org.apache.tapestry5.http.services.ApplicationInitializerFilter;
+import org.apache.tapestry5.http.services.Context;
 
 import java.util.ArrayList;
 import java.util.List;

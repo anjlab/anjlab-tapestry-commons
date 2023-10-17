@@ -33,9 +33,9 @@ import javax.servlet.ServletContextListener;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.services.ApplicationGlobals;
-import org.apache.tapestry5.services.ApplicationInitializer;
-import org.apache.tapestry5.services.Context;
+import org.apache.tapestry5.http.services.ApplicationGlobals;
+import org.apache.tapestry5.http.services.ApplicationInitializer;
+import org.apache.tapestry5.http.services.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

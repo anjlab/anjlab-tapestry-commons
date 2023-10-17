@@ -15,9 +15,9 @@
  */
 package com.anjlab.tapestry5.config;
 
-import org.apache.tapestry5.ioc.MappedConfiguration;
+import org.apache.tapestry5.commons.MappedConfiguration;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.ioc.services.TypeCoercer;
+import org.apache.tapestry5.commons.services.TypeCoercer;
 import org.junit.Test;
 import org.mockito.Mockito;
 
