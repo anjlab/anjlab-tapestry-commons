@@ -34,8 +34,6 @@ import java.util.concurrent.TimeoutException;
  *          Use with care.
  *
  * @author dmitrygusev
- *
- * @param <T>
  */
 public class QuartzJobFuture<T> implements Future<T>, JobListener
 {

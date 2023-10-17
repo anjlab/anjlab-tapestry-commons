@@ -17,7 +17,7 @@ allprojects {
     }
 }
 
-project.ext.tapestry_version = '5.7.0'
+project.ext.tapestry_version = '5.8.3'
 
 configurations {
     all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'

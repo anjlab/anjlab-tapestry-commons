@@ -16,10 +16,10 @@
 package com.anjlab.tapestry5.services.quartz;
 
 import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.http.modules.TapestryHttpModule;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.services.SymbolSource;
-import org.apache.tapestry5.modules.TapestryModule;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.quartz.*;
@@ -40,8 +40,8 @@ public class SchedulerTest
     public static void setup()
     {
         registry = new RegistryBuilder().add(
-                TapestryModule.class,
-                QuartzModule.class)
+                        TapestryHttpModule.class,
+                        QuartzModule.class)
                 .build();
 
         registry.performRegistryStartup();

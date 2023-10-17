@@ -16,12 +16,12 @@
 package com.anjlab.tapestry5.services;
 
 import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.http.modules.TapestryHttpModule;
+import org.apache.tapestry5.http.services.RequestGlobals;
 import org.apache.tapestry5.ioc.Registry;
 import org.apache.tapestry5.ioc.RegistryBuilder;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
-import org.apache.tapestry5.modules.TapestryModule;
-import org.apache.tapestry5.http.services.RequestGlobals;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,8 +37,8 @@ public class InjectionHelperTest
     public static void setup()
     {
         registry = new RegistryBuilder().add(
-                TapestryModule.class,
-                CommonsModule.class)
+                        TapestryHttpModule.class,
+                        CommonsModule.class)
                 .build();
 
         registry.performRegistryStartup();
