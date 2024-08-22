@@ -42,7 +42,7 @@ subprojects {
 
     dependencies {
         def slf4j_version = '1.7.5'
-        def logback_version = '1.0.13'
+        def logback_version = '1.5.7'
 
         api "org.slf4j:slf4j-api:${slf4j_version}"
         implementation "org.slf4j:jcl-over-slf4j:${slf4j_version}"
