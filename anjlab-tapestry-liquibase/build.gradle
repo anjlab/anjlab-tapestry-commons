@@ -8,7 +8,7 @@ project.ext.hibernate_version='6.6.0.Final'
 
 dependencies {
     api 'org.liquibase:liquibase-core:3.1.0'
-    api "org.apache.tapestry:tapestry-ioc:${tapestry_version}"
+    api "org.apache.tapestry:tapestry-ioc-jakarta:${tapestry_version}"
     api "org.apache.tapestry:tapestry-http-jakarta:${tapestry_version}"
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
