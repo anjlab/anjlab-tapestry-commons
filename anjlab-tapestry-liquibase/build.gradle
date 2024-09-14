@@ -4,7 +4,7 @@ description = 'Liquibase for Tapestry5'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-project.ext.hibernate_version='5.0.0.CR3'
+project.ext.hibernate_version='6.6.0.Final'
 
 dependencies {
     api 'org.liquibase:liquibase-core:3.1.0'
@@ -12,7 +12,7 @@ dependencies {
     api "org.apache.tapestry:tapestry-http-jakarta:${tapestry_version}"
 
     compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0'
-    compileOnly "org.apache.tapestry:tapestry-jpa:${tapestry_version}"
+    compileOnly "org.apache.tapestry:tapestry-jpa-jakarta:${tapestry_version}"
     compileOnly "org.hibernate:hibernate-core:${hibernate_version}"
 }
 

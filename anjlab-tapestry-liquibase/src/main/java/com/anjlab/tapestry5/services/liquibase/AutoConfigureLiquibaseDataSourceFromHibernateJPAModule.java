@@ -17,12 +17,15 @@ package com.anjlab.tapestry5.services.liquibase;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 
+import jakarta.persistence.spi.PersistenceUnitInfo;
 import org.apache.tapestry5.func.F;
 import org.apache.tapestry5.func.Predicate;
 import org.apache.tapestry5.commons.MappedConfiguration;
@@ -59,8 +62,7 @@ public class AutoConfigureLiquibaseDataSourceFromHibernateJPAModule
     public static void dataSourceForLiquibase(
             final MethodAdviceReceiver receiver,
             final EntityManagerSource entityManagerSource,
-            @Inject @Symbol(LIQUIBASE_PERSISTENCE_UNIT_NAME)
-            final String persistenceUnitName,
+            @Inject @Symbol(LIQUIBASE_PERSISTENCE_UNIT_NAME) final String persistenceUnitName,
             final Logger logger)
     {
         receiver.adviseAllMethods(new MethodAdvice()
@@ -88,13 +90,13 @@ public class AutoConfigureLiquibaseDataSourceFromHibernateJPAModule
                     PersistenceUnitInfo persistenceUnitInfo =
                             F.flow(entityManagerSource.getPersistenceUnitInfos())
                                     .filter(new Predicate<PersistenceUnitInfo>()
-                    {
-                        @Override
-                        public boolean accept(PersistenceUnitInfo unitInfo)
-                        {
-                            return unitInfo.getPersistenceUnitName().equals(persistenceUnitName);
-                        }
-                    }).first();
+                                    {
+                                        @Override
+                                        public boolean accept(PersistenceUnitInfo unitInfo)
+                                        {
+                                            return unitInfo.getPersistenceUnitName().equals(persistenceUnitName);
+                                        }
+                                    }).first();
 
                     if (persistenceUnitInfo == null)
                     {
@@ -102,13 +104,15 @@ public class AutoConfigureLiquibaseDataSourceFromHibernateJPAModule
                         persistenceUnitInfo = entityManagerSource.getPersistenceUnitInfos().get(0);
                     }
 
+                    final Properties properties = persistenceUnitInfo.getProperties();
                     String connectionProviderClassName =
-                            (String) persistenceUnitInfo.getProperties()
-                                    .get(AvailableSettings.CONNECTION_PROVIDER);
+                            (String) properties.get(AvailableSettings.CONNECTION_PROVIDER);
 
                     Class<?> connectionProviderClass = Class.forName(connectionProviderClassName);
                     Object connectionProvider = connectionProviderClass.newInstance();
-                    ((Configurable) connectionProvider).configure(persistenceUnitInfo.getProperties());
+                    Map<String, Object> configurationValues = new HashMap<>();
+                    properties.forEach((key, value) -> configurationValues.put((String) key, value));
+                    ((Configurable) connectionProvider).configure(configurationValues);
                     dataSource = ((Wrapped) connectionProvider).unwrap(DataSource.class);
 
                     ic = new InitialContext();

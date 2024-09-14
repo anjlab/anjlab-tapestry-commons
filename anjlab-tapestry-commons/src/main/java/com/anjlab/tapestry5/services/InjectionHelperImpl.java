@@ -15,21 +15,21 @@
  */
 package com.anjlab.tapestry5.services;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.tapestry5.commons.ObjectCreator;
 import org.apache.tapestry5.commons.ObjectLocator;
+import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.OperationTracker;
 import org.apache.tapestry5.ioc.ReloadAware;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.apache.tapestry5.ioc.internal.OperationTrackerImpl;
-import org.apache.tapestry5.commons.util.CollectionFactory;
 import org.apache.tapestry5.ioc.internal.util.InjectionResources;
 import org.apache.tapestry5.ioc.internal.util.InternalUtils;
 import org.apache.tapestry5.ioc.internal.util.MapInjectionResources;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;

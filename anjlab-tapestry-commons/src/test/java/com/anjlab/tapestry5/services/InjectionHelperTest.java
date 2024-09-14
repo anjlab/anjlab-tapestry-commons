@@ -15,6 +15,7 @@
  */
 package com.anjlab.tapestry5.services;
 
+import jakarta.annotation.PostConstruct;
 import org.apache.tapestry5.commons.ObjectLocator;
 import org.apache.tapestry5.http.modules.TapestryHttpModule;
 import org.apache.tapestry5.http.services.RequestGlobals;
@@ -25,8 +26,6 @@ import org.apache.tapestry5.ioc.annotations.PostInjection;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import javax.annotation.PostConstruct;
 
 public class InjectionHelperTest
 {

@@ -21,6 +21,6 @@ public class CommonsModule
 {
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(InjectionHelper.class);
+        binder.bind(InjectionHelper.class, InjectionHelperImpl.class);
     }
 }
